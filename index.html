@@ -34,53 +34,52 @@
         }
 
         /* ── Animações Gerais ─────────────────────────────────── */
-        .fade-in { animation: fadeIn 0.5s ease-in-out forwards; }
-        .fade-out { animation: fadeOut 0.5s ease-in-out forwards; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .fade-out { animation: fadeOut 0.4s ease-out forwards; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes fadeOut {
             from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 0; transform: translateY(-15px); }
         }
 
-        /* ── Fundo Animado (Neon Orbs) ────────────────────────── */
+        /* ── Fundo Animado Otimizado (Performance 60FPS) ──────── */
         .bg-animado {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -1;
-            overflow: hidden;
             background: #05050a;
+            overflow: hidden;
         }
 
         .orbita {
             position: absolute;
             border-radius: 50%;
-            filter: blur(90px);
-            opacity: 0.6;
+            background: radial-gradient(circle, var(--cor) 0%, transparent 70%);
             animation: flutuar 15s infinite alternate ease-in-out;
+            will-change: transform;
         }
 
-        .orbita-1 { width: 50vw; height: 50vw; background: var(--cor-verdade); top: -10%; left: -10%; animation-duration: 12s; }
-        .orbita-2 { width: 45vw; height: 45vw; background: var(--cor-desafio); bottom: -10%; right: -10%; animation-duration: 18s; animation-direction: alternate-reverse; }
-        .orbita-3 { width: 35vw; height: 35vw; background: var(--cor-roxo); top: 30%; left: 30%; animation-duration: 20s; opacity: 0.4; }
+        .orbita-1 { --cor: rgba(0, 212, 255, 0.4); width: 60vw; height: 60vw; top: -15%; left: -15%; animation-duration: 12s; }
+        .orbita-2 { --cor: rgba(255, 0, 127, 0.4); width: 55vw; height: 55vw; bottom: -15%; right: -15%; animation-duration: 18s; animation-direction: alternate-reverse; }
+        .orbita-3 { --cor: rgba(112, 0, 255, 0.3); width: 45vw; height: 45vw; top: 30%; left: 30%; animation-duration: 20s; }
 
         @keyframes flutuar {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(5vw, 5vh) scale(1.1); }
-            100% { transform: translate(-5vw, 10vh) scale(0.9); }
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(4vw, 4vh, 0) scale(1.1); }
+            100% { transform: translate3d(-4vw, 8vh, 0) scale(0.9); }
         }
 
         /* ── Confetes (Vitória) ───────────────────────────────── */
         .confetti {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: var(--cor-verdade);
+            width: 8px; height: 8px;
             opacity: 0;
+            will-change: transform, opacity;
         }
 
         @keyframes fall {
@@ -92,7 +91,7 @@
         .oculto { display: none !important; }
 
         /* ── Header ───────────────────────────────────────────── */
-        header { text-align: center; margin-bottom: 25px; z-index: 10; transition: opacity 0.5s ease; }
+        header { text-align: center; margin-bottom: 25px; z-index: 10; transition: opacity 0.4s ease; }
 
         h1 {
             font-size: 2.8rem;
@@ -102,7 +101,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-style: italic;
-            animation: brilhoTexto 3s linear infinite;
+            animation: brilhoTexto 4s linear infinite;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 5px;
@@ -127,13 +126,13 @@
             border: 1px solid rgba(255, 77, 77, 0.4);
             border-radius: 50px;
             background: rgba(255, 77, 77, 0.15);
-            box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
-            animation: piscarAviso 2s infinite;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.2);
+            animation: piscarAviso 3s infinite;
         }
 
         @keyframes piscarAviso {
-            0%, 100% { opacity: 1; box-shadow: 0 0 15px rgba(255, 77, 77, 0.3); }
-            50% { opacity: 0.7; box-shadow: 0 0 5px rgba(255, 77, 77, 0.1); }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
 
         /* ── Layout Flexível (Painéis e Jogo) ─────────────────── */
@@ -155,9 +154,9 @@
             border: 1px solid var(--borda);
             border-radius: 25px;
             padding: 30px;
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             color: rgba(255,255,255,0.85);
             font-size: 0.9rem;
             line-height: 1.6;
@@ -170,8 +169,8 @@
         }
 
         .painel-lateral h3 { font-size: 1.3rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;}
-        .painel-esquerdo h3 { color: var(--cor-verdade); text-shadow: 0 0 10px rgba(0,212,255,0.4); }
-        .painel-direito h3 { color: var(--cor-desafio); text-shadow: 0 0 10px rgba(255,0,127,0.4); }
+        .painel-esquerdo h3 { color: var(--cor-verdade); text-shadow: 0 0 8px rgba(0,212,255,0.4); }
+        .painel-direito h3 { color: var(--cor-desafio); text-shadow: 0 0 8px rgba(255,0,127,0.4); }
         
         .lista-instrucoes { list-style: none; padding: 0; }
         .lista-instrucoes li { margin-bottom: 12px; }
@@ -205,13 +204,14 @@
             position: fixed;
             top: 20px; right: 20px;
             z-index: 1000;
-            width: 190px;
+            width: 180px;
             padding: 15px;
             border-radius: 20px;
             border: 1px solid var(--borda);
             background: var(--vidro);
-            backdrop-filter: blur(15px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
         }
 
@@ -243,20 +243,20 @@
         /* ── Container do Jogo Principal ──────────────────────── */
         .container {
             width: 100%;
-            padding: 35px 30px;
+            padding: 35px 20px;
             border-radius: 30px;
             border: 1px solid var(--borda);
             background: var(--vidro);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
         }
 
         /* ── Inputs e selects ─────────────────────────────────── */
         input, select {
-            width: 85%;
-            padding: 14px;
+            width: 90%;
+            padding: 12px;
             margin: 8px 0;
             border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.2);
@@ -266,12 +266,12 @@
             outline: none;
             transition: 0.3s;
         }
-        input:focus, select:focus { border-color: var(--cor-verdade); box-shadow: 0 0 15px rgba(0,212,255,0.3); }
+        input:focus, select:focus { border-color: var(--cor-verdade); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
 
         /* ── Botões ───────────────────────────────────────────── */
         .btn {
-            padding: 16px 25px;
-            margin: 8px 5px;
+            padding: 15px 20px;
+            margin: 8px 4px;
             border: none;
             border-radius: 15px;
             font-weight: 800;
@@ -279,36 +279,22 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.1s ease, box-shadow 0.3s ease;
         }
 
-        .btn:active { transform: scale(0.95); }
+        .btn:active { transform: scale(0.96); }
 
-        .btn-verdade  { background: var(--cor-verdade); color: #000; box-shadow: 0 0 15px rgba(0, 212, 255, 0.4); }
-        .btn-verdade:hover { box-shadow: 0 0 25px rgba(0, 212, 255, 0.7); }
+        .btn-verdade  { background: var(--cor-verdade); color: #000; box-shadow: 0 0 12px rgba(0, 212, 255, 0.3); }
+        .btn-desafio  { background: var(--cor-desafio); color: #fff; box-shadow: 0 0 12px rgba(255, 0, 127, 0.3); }
 
-        .btn-desafio  { background: var(--cor-desafio); color: #fff; box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); }
-        .btn-desafio:hover { box-shadow: 0 0 25px rgba(255, 0, 127, 0.7); }
-
-        .btn-iniciar { animation: pulsarBotao 2s infinite; }
-
-        @keyframes pulsarBotao {
-            0% { box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); transform: scale(1); }
-            50% { box-shadow: 0 0 30px rgba(255, 0, 127, 0.8); transform: scale(1.02); }
-            100% { box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); transform: scale(1); }
-        }
-
-        .btn-sim      { background: #00ff88; color: #000; box-shadow: 0 0 15px rgba(0,255,136,0.4); }
-        .btn-sim:hover { box-shadow: 0 0 25px rgba(0,255,136,0.7); }
-        
-        .btn-nao      { background: #ff4444; color: #fff; box-shadow: 0 0 15px rgba(255,68,68,0.4); }
-        .btn-nao:hover { box-shadow: 0 0 25px rgba(255,68,68,0.7); }
+        .btn-sim      { background: #00ff88; color: #000; box-shadow: 0 0 12px rgba(0,255,136,0.3); }
+        .btn-nao      { background: #ff4d4d; color: #fff; box-shadow: 0 0 12px rgba(255,77,77,0.3); }
 
         /* ── Seletor de nível ─────────────────────────────────── */
-        .niveis { display: flex; justify-content: center; gap: 12px; margin: 20px 0; }
+        .niveis { display: flex; justify-content: center; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
 
         .btn-nivel {
-            padding: 8px 15px;
+            padding: 8px 12px;
             font-size: 0.75rem;
             font-weight: 600;
             border-radius: 20px;
@@ -316,7 +302,7 @@
             background: rgba(0,0,0,0.3);
             color: #ccc;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-family: inherit;
         }
 
@@ -324,21 +310,21 @@
             border-color: var(--cor-verdade);
             background: rgba(0, 212, 255, 0.15);
             color: #fff;
-            box-shadow: 0 0 15px rgba(0,212,255,0.3);
+            box-shadow: 0 0 10px rgba(0,212,255,0.2);
             transform: scale(1.05);
         }
 
         /* ── Modo vingança ────────────────────────────────────── */
         .modo-vinganca {
             background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
+            padding: 15px 10px;
             border-radius: 15px;
             margin-top: 15px;
             border: 1px solid rgba(255,255,255,0.05);
         }
-        .modo-vinganca p { font-size: 0.75rem; color: #b3b3b3; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;}
-        .modo-vinganca .linha { display: flex; gap: 10px; justify-content: center; align-items: center; }
-        .modo-vinganca select { width: 35%; margin: 0; padding: 10px; font-size: 0.8rem; }
+        .modo-vinganca p { font-size: 0.75rem; color: #aaa; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;}
+        .modo-vinganca .linha { display: flex; gap: 8px; justify-content: center; align-items: center; }
+        .modo-vinganca select { width: 35%; margin: 0; padding: 10px; font-size: 0.75rem; }
         .modo-vinganca input  { width: 60%; margin: 0; padding: 10px; }
 
         /* ── Meta de pontos ───────────────────────────────────── */
@@ -346,15 +332,15 @@
         .meta-wrap label { font-size: 0.75rem; color: #aaa; text-transform: uppercase; font-weight: 600;}
         .meta-wrap input  { width: 80px; text-align: center; font-size: 1.1rem; font-weight: bold;}
 
-        /* ── Card 3D Dinâmico ─────────────────────────────────── */
+        /* ── Card 3D Dinâmico Otimizado ───────────────────────── */
         .cena { width: 100%; height: 220px; perspective: 1000px; margin: 25px 0; }
 
         .carta {
             width: 100%; height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+            will-change: transform;
         }
         
         .carta:not(.virada):hover {
@@ -371,68 +357,68 @@
             align-items: center;
             justify-content: center;
             border-radius: 20px;
-            padding: 25px;
+            padding: 20px;
             backface-visibility: hidden;
-            transition: all 0.5s ease;
+            -webkit-backface-visibility: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .carta-frente { 
             background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: rgba(255,255,255,0.4); 
             font-size: 4rem; 
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.02);
         }
 
         .carta-verso  { 
-            background: rgba(10, 10, 15, 0.9); 
+            background: rgba(10, 10, 15, 0.95); 
             border: 1px solid rgba(255, 255, 255, 0.1);
             transform: rotateY(180deg); 
-            font-size: 1.2rem; 
-            line-height: 1.5; 
+            font-size: 1.15rem; 
+            line-height: 1.4; 
             font-weight: 600;
+            /* Melhoria UX: Permite scroll se a carta for gigante no telemóvel */
+            overflow-y: auto;
         }
+
+        /* Ocultar barra de scroll para ficar bonito, mas manter a função */
+        .carta-verso::-webkit-scrollbar { width: 4px; }
+        .carta-verso::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
         .carta.tema-v .carta-verso {
             border-color: var(--cor-verdade);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), inset 0 0 20px rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2), inset 0 0 15px rgba(0, 212, 255, 0.1);
             color: #e6faff;
-            text-shadow: 0 0 8px rgba(0,212,255,0.6);
         }
 
         .carta.tema-d .carta-verso {
             border-color: var(--cor-desafio);
-            box-shadow: 0 0 30px rgba(255, 0, 127, 0.3), inset 0 0 20px rgba(255, 0, 127, 0.2);
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.2), inset 0 0 15px rgba(255, 0, 127, 0.1);
             color: #ffe6f0;
-            text-shadow: 0 0 8px rgba(255,0,127,0.6);
         }
 
         /* ── Ecrã final ───────────────────────────────────────── */
         #tela-final h2 { 
             color: var(--cor-desafio); 
-            text-shadow: 0 0 15px rgba(255,0,127,0.5);
-            font-size: 2.2rem;
+            text-shadow: 0 0 10px rgba(255,0,127,0.4);
+            font-size: 2rem;
             margin-bottom: 10px;
         }
 
         .castigo-box {
             border: 2px dashed var(--cor-desafio);
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
             margin: 25px 0;
             background: rgba(255, 0, 127, 0.05);
-            box-shadow: inset 0 0 20px rgba(255,0,127,0.1);
         }
 
-        .castigo-box p:first-child { color: var(--cor-desafio); font-size: 0.9rem; font-weight: 800; letter-spacing: 1px;}
-        .castigo-box .castigo-texto { color: #fff; font-style: italic; font-size: 1.2rem; margin-top: 10px;}
+        .castigo-box p:first-child { color: var(--cor-desafio); font-size: 0.85rem; font-weight: 800; letter-spacing: 1px;}
+        .castigo-box .castigo-texto { color: #fff; font-style: italic; font-size: 1.1rem; margin-top: 10px;}
 
         /* ── Footer ───────────────────────────────────────────── */
         footer { margin-top: 40px; margin-bottom: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.4); z-index: 10; text-align: center;}
         footer strong { color: var(--cor-verdade); letter-spacing: 1px;}
-        
-        #texto-carta { animation: fadeTexto 0.5s ease-in forwards; }
-        @keyframes fadeTexto { from { opacity: 0; } to { opacity: 1; } }
 
     </style>
 </head>
@@ -470,7 +456,7 @@
             
             <div id="tela-setup" class="container fade-in">
                 <input type="text" id="campo-nome" placeholder="Nome do jogador..." maxlength="20">
-                <button class="btn btn-verdade" id="btn-adicionar" style="width:92%; margin-top:5px;">
+                <button class="btn btn-verdade" id="btn-adicionar" style="width:90%; margin-top:5px;">
                     Adicionar Jogador
                 </button>
 
@@ -503,8 +489,8 @@
             </div>
 
             <div id="tela-jogo" class="container oculto fade-in">
-                <div id="info-vez" style="font-size:0.9rem; color:#aaa; text-transform:uppercase; font-weight:600; letter-spacing: 1px;">
-                    Vez de <span id="nome-vez" style="color:var(--cor-verdade); font-size:1.1rem; animation: brilhoTexto 2s infinite alternate;"></span>
+                <div id="info-vez" style="font-size:0.85rem; color:#aaa; text-transform:uppercase; font-weight:600; letter-spacing: 1px;">
+                    Vez de <span id="nome-vez" style="color:var(--cor-verdade); font-size:1.1rem;"></span>
                 </div>
 
                 <div class="cena">
@@ -520,7 +506,7 @@
                 </div>
 
                 <div id="controles-validacao" class="oculto fade-in">
-                    <p style="font-size:1rem; color:#ccc; margin-bottom: 10px; font-weight: 600;">Cumpriu a missão?</p>
+                    <p style="font-size:0.9rem; color:#ccc; margin-bottom: 10px; font-weight: 600;">Cumpriu a missão?</p>
                     <button class="btn btn-sim" id="btn-sim" style="width: 40%;">SIM</button>
                     <button class="btn btn-nao" id="btn-nao" style="width: 40%;">NÃO</button>
                 </div>
@@ -528,7 +514,7 @@
 
             <div id="tela-final" class="container oculto fade-in">
                 <h2>FIM DA JORNADA</h2>
-                <p id="nome-vencedor" style="font-size:1.8rem; font-weight:800; color:var(--cor-verdade); text-shadow: 0 0 10px rgba(0,212,255,0.5); animation: brilhoTexto 1.5s infinite alternate;"></p>
+                <p id="nome-vencedor" style="font-size:1.8rem; font-weight:800; color:var(--cor-verdade);"></p>
 
                 <div class="castigo-box">
                     <p>CASTIGO FINAL PARA <span id="nome-perdedor" style="color:#fff;"></span>:</p>
@@ -557,7 +543,7 @@
 
     <script>
     /* ================================================================
-       SEGURANÇA (Anti-XSS)
+       SEGURANÇA E HIGIENE (Anti-XSS)
     ================================================================ */
     function sanitizarTexto(str) {
         const temp = document.createElement('div');
@@ -760,15 +746,18 @@
         const container = document.getElementById('confetti-container');
         container.innerHTML = '';
         const cores = ['#00d4ff', '#ff007f', '#7000ff', '#00ff88', '#fff'];
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 50; i++) { // Reduzido de 80 para 50 para melhor performance
             const confete = document.createElement('div');
             confete.classList.add('confetti');
             confete.style.left = Math.random() * 100 + 'vw';
             confete.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
-            confete.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
-            confete.style.animationDelay = Math.random() * 2 + 's';
+            confete.style.animation = `fall ${Math.random() * 2 + 2}s linear forwards`;
+            confete.style.animationDelay = Math.random() * 1 + 's';
             container.appendChild(confete);
         }
+        
+        // Limpa a memória após os confetes caírem
+        setTimeout(() => { container.innerHTML = ''; }, 5000);
     }
 
     function guardarEstado() { localStorage.setItem(CHAVE_STORAGE, JSON.stringify(estadoJogo)); }
@@ -799,7 +788,11 @@
         }
 
         estadoJogo.jogadores.push({ nome, pontos: 0 });
-        campo.value = ''; campo.focus();
+        campo.value = '';
+        
+        // Melhoria 1: Adicionar um pequeno atraso antes do focus() para manter o teclado aberto em dispositivos mobile
+        setTimeout(() => { campo.focus(); }, 10);
+        
         renderizarListaNomes(); tocarSom(600, 0.05); guardarEstado();
     }
 
@@ -858,8 +851,6 @@
 
     function mostrarTelaJogo() {
         document.getElementById('tela-setup').classList.add('oculto');
-        
-        // Esconde os painéis laterais quando o jogo inicia
         document.getElementById('painel-esquerdo').classList.add('oculto');
         document.getElementById('painel-direito').classList.add('oculto');
         
@@ -929,21 +920,20 @@
         const carta = document.getElementById('carta-principal');
         carta.classList.remove('virada');
         document.getElementById('controles-validacao').classList.add('oculto');
+        
+        // Atraso otimizado para não congelar o CSS
         setTimeout(() => {
             carta.classList.remove('tema-v', 'tema-d');
             document.getElementById('controles-sorteio').classList.remove('oculto');
-        }, 800);
+        }, 600); // Reduzido de 800 para 600ms para parecer mais ágil
 
         atualizarPlacar(); guardarEstado();
     }
 
     function mostrarTelaFinal() {
         document.getElementById('tela-jogo').classList.add('oculto');
-        
-        // Esconde o Header e o Placar para manter o foco no vencedor
         document.getElementById('cabecalho').classList.add('oculto');
         document.getElementById('placar').classList.add('oculto');
-        
         document.getElementById('tela-final').classList.remove('oculto');
 
         const ord = [...estadoJogo.jogadores].sort((a, b) => b.pontos - a.pontos);
