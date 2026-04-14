@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verdade ou Consequência - Benj Carhl</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ── Tokens ───────────────────────────────────────────── */
+        :root {
+            --cor-verdade: #00d4ff;
+            --cor-desafio: #ff007f;
+            --bg: #000;
+            --vidro: rgba(255, 255, 255, 0.05);
+            --borda: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ── Reset / Base ─────────────────────────────────────── */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Utilitários ──────────────────────────────────────── */
+        .oculto { display: none !important; }
+
+        /* ── Header ───────────────────────────────────────────── */
+        header { text-align: center; margin-bottom: 20px; }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, var(--cor-verdade), var(--cor-desafio));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-style: italic;
+        }
+
+        .tagline { font-size: 0.9rem; color: #666; letter-spacing: 2px; }
+
+        .aviso-idade {
+            display: inline-block;
+            color: #ff3333;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 15px;
+            padding: 5px 15px;
+            border: 1px solid rgba(255, 51, 51, 0.3);
+            border-radius: 50px;
+            background: rgba(255, 51, 51, 0.1);
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
+        }
+
+        /* ── Placar fixo ──────────────────────────────────────── */
+        #placar {
+            position: fixed;
+            top: 20px; right: 20px;
+            z-index: 1000;
+            width: 180px;
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid var(--borda);
+            background: var(--vidro);
+            backdrop-filter: blur(10px);
+        }
+
+        .placar-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        #btn-recomecar {
+            width: 100%;
+            margin-top: 10px;
+            background: none;
+            border: none;
+            color: red;
+            font-size: 0.6rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* ── Container principal ──────────────────────────────── */
+        .container {
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 30px;
+            border: 1px solid var(--borda);
+            background: var(--vidro);
+            backdrop-filter: blur(20px);
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ── Inputs e selects ─────────────────────────────────── */
+        input, select {
+            width: 85%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: 1px solid #333;
+            background: #111;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        /* ── Botões ───────────────────────────────────────────── */
+        .btn {
+            padding: 15px 25px;
+            margin: 5px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.1s;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-verdade  { background: var(--cor-verdade); color: #000; }
+        .btn-desafio  { background: var(--cor-desafio); color: #fff; }
+        .btn-sim      { background: #00ff88; color: #000; }
+        .btn-nao      { background: #ff4444; color: #fff; }
+
+        /* ── Seletor de nível ─────────────────────────────────── */
+        .niveis {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .btn-nivel {
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            border-radius: 20px;
+            border: 1px solid #333;
+            background: none;
+            color: #fff;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-nivel.ativo {
+            opacity: 1;
+            border-color: var(--cor-verdade);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* ── Modo vingança ────────────────────────────────────── */
+        .modo-vinganca {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+
+        .modo-vinganca p {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .modo-vinganca .linha {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modo-vinganca select { width: 35%; margin: 0; padding: 10px; font-size: 0.8rem; }
+        .modo-vinganca input  { width: 60%; margin: 0; padding: 10px; }
+
+        /* ── Meta de pontos ───────────────────────────────────── */
+        .meta-wrap { margin-top: 20px; }
+        .meta-wrap label { font-size: 0.7rem; color: #555; }
+        .meta-wrap input  { width: 80px; text-align: center; }
+
+        /* ── Card 3D ──────────────────────────────────────────── */
+        .cena { width: 100%; height: 200px; perspective: 1000px; margin: 20px 0; }
+
+        .carta {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .carta.virada { transform: rotateY(180deg); }
+
+        .carta-face {
+            position: absolute;
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--borda);
+            backface-visibility: hidden;
+        }
+
+        .carta-frente { background: rgba(255, 255, 255, 0.03); color: #444; font-size: 3rem; }
+        .carta-verso  { background: rgba(0, 0, 0, 0.4); transform: rotateY(180deg); font-size: 1.2rem; line-height: 1.4; }
+
+        /* ── Ecrã final ───────────────────────────────────────── */
+        #tela-final h2 { color: var(--cor-desafio); }
+
+        .castigo-box {
+            border: 1px dashed red;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .castigo-box p { color: red; font-size: 0.8rem; font-weight: bold; }
+        .castigo-box .castigo-texto { color: #fff; font-style: italic; font-size: 1.1rem; }
+
+        /* ── Footer ───────────────────────────────────────────── */
+        footer { margin-top: 30px; font-size: 0.7rem; color: #444; }
+    </style>
+</head>
+<body>
+
+    <!-- Placar fixo -->
+    <div id="placar" class="oculto">
+        <div id="lista-pontos"></div>
+        <button id="btn-recomecar">RECOMEÇAR TUDO</button>
+    </div>
+
+    <!-- Header -->
+    <header id="cabecalho">
+        <h1>verdade ou consequência</h1>
+        <p class="tagline">Onde tudo começa e termina</p>
+        <div class="aviso-idade">⚠️ Explícito • +18 anos</div>
+    </header>
+
+    <!-- Tela de configuração -->
+    <div id="tela-setup" class="container">
+
+        <input type="text" id="campo-nome" placeholder="Nome do jogador...">
+        <button class="btn btn-verdade" id="btn-adicionar" style="width:92%; margin-top:5px;">
+            Adicionar Jogador
+        </button>
+
+        <div id="lista-nomes" style="font-size:0.8rem; color:#888; margin:15px 0;"></div>
+
+        <div class="niveis" id="niveis"></div>
+
+        <div class="modo-vinganca">
+            <p>Modo Vingança (Cartas Secretas):</p>
+            <div class="linha">
+                <select id="tipo-carta-custom">
+                    <option value="v">Verdade</option>
+                    <option value="d">Desafio</option>
+                </select>
+                <input type="text" id="campo-carta-custom" placeholder="Escreve aqui...">
+            </div>
+            <button class="btn btn-verdade" id="btn-guardar-carta" style="font-size:0.7rem; width:100%; margin-top:10px;">
+                Guardar Carta Secreta
+            </button>
+        </div>
+
+        <div class="meta-wrap">
+            <label>Meta de Pontos (Min: 10 | Max: 60):</label><br>
+            <input type="number" id="campo-meta" value="30" min="10" max="60">
+        </div>
+
+        <button class="btn btn-desafio" id="btn-iniciar" style="width:100%; margin-top:20px;">
+            Iniciar a diversão
+        </button>
+    </div>
+
+    <!-- Tela de jogo -->
+    <div id="tela-jogo" class="container oculto">
+
+        <div id="info-vez" style="font-size:0.8rem; color:#888; text-transform:uppercase;">
+            Vez de <span id="nome-vez" style="color:var(--cor-verdade); font-weight:bold;"></span>
+        </div>
+
+        <div class="cena">
+            <div class="carta" id="carta-principal">
+                <div class="carta-face carta-frente">?</div>
+                <div class="carta-face carta-verso" id="texto-carta"></div>
+            </div>
+        </div>
+
+        <div id="controles-sorteio">
+            <button class="btn btn-verdade" id="btn-verdade">Verdade (+2)</button>
+            <button class="btn btn-desafio" id="btn-desafio">Desafio (+4)</button>
+        </div>
+
+        <div id="controles-validacao" class="oculto">
+            <p style="font-size:0.9rem; color:#666;">Realizou o pedido?</p>
+            <button class="btn btn-sim" id="btn-sim">SIM</button>
+            <button class="btn btn-nao" id="btn-nao">NÃO</button>
+        </div>
+    </div>
+
+    <!-- Tela final -->
+    <div id="tela-final" class="container oculto">
+        <h2>FIM DA JORNADA</h2>
+        <p id="nome-vencedor" style="font-size:1.5rem; font-weight:bold;"></p>
+
+        <div class="castigo-box">
+            <p>CASTIGO FINAL PARA <span id="nome-perdedor"></span>:</p>
+            <p id="texto-castigo" class="castigo-texto"></p>
+        </div>
+
+        <button class="btn btn-verdade" id="btn-nova-partida">Nova Partida</button>
+    </div>
+
+    <footer>&copy; 2026 Desenvolvido por <strong>Benj Carhl</strong></footer>
+
+    <script>
+    /* ================================================================
+       CONFIGURAÇÃO INICIAL
+    ================================================================ */
+
+    const CHAVE_STORAGE = 'benjCarhl_jogo_v2';
+
+    const PERGUNTAS = {
+        v1: ["Qual é o teu maior medo infantil?", "Já mentiste para não sair de casa?", "Qual foi o teu primeiro crush?"],
+        d1: ["Faz uma mímica de um animal.", "Bebe um copo de água sem usar as mãos.", "Dança como se ninguém estivesse a ver."],
+        v2: ["Quem aqui beijarias se fosses obrigado?", "O que mais te atrai em [ALVO]?", "Já tiveste um sonho com alguém nesta roda?"],
+        d2: ["Dá um beijo no pescoço de [ALVO].", "Faz uma massagem nas costas de [ALVO].", "Sussurra algo no ouvido de [ALVO]."],
+        v3: ["Qual é a tua maior fantasia com [ALVO]?", "Tirarias a roupa aqui por 60 pontos?", "Qual é o segredo mais sujo que escondes?"],
+        d3: ["Tira uma peça de roupa.", "Senta no colo de [ALVO] por 2 rodadas.", "Deixa [ALVO] dar-te uma dentadinha na orelha."]
+    };
+
+    const PONTOS_POR_TIPO = { v: 2, d: 4 };
+
+    /* ================================================================
+       ESTADO DO JOGO
+    ================================================================ */
+
+    let estadoJogo = {
+        jogadores: [],
+        turnoAtual: 0,
+        nivel: 1,
+        metaPontos: 30,
+        cartasCustomVerdade: [],
+        cartasCustomDesafio: [],
+        tipoTurnoAtual: null,
+        jogoAtivo: false
+    };
+
+    /* ================================================================
+       ÁUDIO
+    ================================================================ */
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function tocarSom(frequencia, duracao) {
+        try {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const oscilador = audioCtx.createOscillator();
+            const ganho     = audioCtx.createGain();
+            oscilador.connect(ganho);
+            ganho.connect(audioCtx.destination);
+            oscilador.frequency.value = frequencia;
+            oscilador.start();
+            oscilador.stop(audioCtx.currentTime + duracao);
+        } catch (erro) {
+            console.warn('Áudio indisponível:', erro);
+        }
+    }
+
+    /* ================================================================
+       PERSISTÊNCIA
+    ================================================================ */
+
+    function guardarEstado() {
+        localStorage.setItem(CHAVE_STORAGE, JSON.stringify(estadoJogo));
+    }
+
+    function carregarEstado() {
+        const dados = localStorage.getItem(CHAVE_STORAGE);
+        if (!dados) return;
+
+        estadoJogo = JSON.parse(dados);
+
+        if (!estadoJogo.cartasCustomVerdade) estadoJogo.cartasCustomVerdade = [];
+        if (!estadoJogo.cartasCustomDesafio) estadoJogo.cartasCustomDesafio = [];
+
+        if (estadoJogo.jogoAtivo) {
+            mostrarTelaJogo();
+        } else {
+            sincronizarSetupComEstado();
+        }
+    }
+
+    function sincronizarSetupComEstado() {
+        document.getElementById('campo-meta').value = estadoJogo.metaPontos || 30;
+        atualizarBotoesNivel();
+        renderizarListaNomes();
+    }
+
+    /* ================================================================
+       CONFIGURAÇÃO — JOGADORES
+    ================================================================ */
+
+    function adicionarJogador() {
+        const campo = document.getElementById('campo-nome');
+        const nome  = campo.value.trim();
+
+        if (nome === '') return;
+
+        const nomeJaExiste = estadoJogo.jogadores.some(
+            j => j.nome.toLowerCase() === nome.toLowerCase()
+        );
+
+        if (nomeJaExiste) {
+            tocarSom(150, 0.3);
+            alert('Este jogador já está na roda!');
+            return;
+        }
+
+        estadoJogo.jogadores.push({ nome, pontos: 0 });
+        campo.value = '';
+        campo.focus();
+
+        renderizarListaNomes();
+        tocarSom(600, 0.05);
+        guardarEstado();
+    }
+
+    function renderizarListaNomes() {
+        const nomes = estadoJogo.jogadores.map(j => j.nome).join(' • ');
+        document.getElementById('lista-nomes').textContent = nomes;
+    }
+
+    /* ================================================================
+       CONFIGURAÇÃO — NÍVEL
+    ================================================================ */
+
+    const NIVEIS = [
+        { id: 1, rotulo: '🧊 Leve' },
+        { id: 2, rotulo: '🔥 Quente' },
+        { id: 3, rotulo: '🧨 Caos' }
+    ];
+
+    function criarBotoesNivel() {
+        const container = document.getElementById('niveis');
+        NIVEIS.forEach(({ id, rotulo }) => {
+            const btn = document.createElement('button');
+            btn.className   = 'btn-nivel';
+            btn.dataset.nivel = id;
+            btn.textContent = rotulo;
+            btn.addEventListener('click', () => selecionarNivel(id));
+            container.appendChild(btn);
+        });
+        atualizarBotoesNivel();
+    }
+
+    function selecionarNivel(nivel) {
+        estadoJogo.nivel = nivel;
+        atualizarBotoesNivel();
+        tocarSom(400, 0.1);
+        guardarEstado();
+    }
+
+    function atualizarBotoesNivel() {
+        document.querySelectorAll('.btn-nivel').forEach(btn => {
+            const ativo = Number(btn.dataset.nivel) === estadoJogo.nivel;
+            btn.classList.toggle('ativo', ativo);
+        });
+    }
+
+    /* ================================================================
+       CONFIGURAÇÃO — CARTAS CUSTOM
+    ================================================================ */
+
+    function guardarCartaCustom() {
+        const campo = document.getElementById('campo-carta-custom');
+        const tipo  = document.getElementById('tipo-carta-custom').value;
+        const texto = campo.value.trim();
+
+        if (texto === '') return;
+
+        if (tipo === 'v') estadoJogo.cartasCustomVerdade.push(texto);
+        else              estadoJogo.cartasCustomDesafio.push(texto);
+
+        campo.value = '';
+        alert('Carta secreta guardada com sucesso!');
+        tocarSom(800, 0.1);
+        guardarEstado();
+    }
+
+    /* ================================================================
+       INICIAR JOGO
+    ================================================================ */
+
+    function iniciarJogo() {
+        if (estadoJogo.jogadores.length < 2) {
+            alert('Precisas de pelo menos 2 jogadores!');
+            return;
+        }
+
+        const valorMeta = parseInt(document.getElementById('campo-meta').value);
+        const metaValida = !isNaN(valorMeta) && valorMeta >= 10 && valorMeta <= 60;
+
+        if (!metaValida) {
+            tocarSom(150, 0.3);
+            alert('❌ ERRO: A meta de pontos é inválida!\n\nPor favor, escolhe um valor entre 10 (mínimo) e 60 (máximo).');
+            return;
+        }
+
+        estadoJogo.metaPontos = valorMeta;
+        estadoJogo.jogoAtivo  = true;
+
+        mostrarTelaJogo();
+        guardarEstado();
+    }
+
+    /* ================================================================
+       RENDERIZAÇÃO — TELAS
+    ================================================================ */
+
+    function mostrarTelaJogo() {
+        document.getElementById('tela-setup').classList.add('oculto');
+        document.getElementById('cabecalho').classList.add('oculto');
+        document.getElementById('tela-jogo').classList.remove('oculto');
+        document.getElementById('placar').classList.remove('oculto');
+        atualizarPlacar();
+    }
+
+    function atualizarPlacar() {
+        const jogadorAtual = estadoJogo.jogadores[estadoJogo.turnoAtual];
+        document.getElementById('nome-vez').textContent = jogadorAtual.nome;
+
+        document.getElementById('lista-pontos').innerHTML = estadoJogo.jogadores
+            .map(j => `<div class="placar-item"><span>${j.nome}</span><b>${j.pontos}</b></div>`)
+            .join('');
+    }
+
+    /* ================================================================
+       LÓGICA DE JOGO — SORTEIO
+    ================================================================ */
+
+    function sortearCarta(tipo) {
+        const chave       = tipo + estadoJogo.nivel;
+        const cartasBase  = PERGUNTAS[chave];
+        const cartasCustom = tipo === 'v'
+            ? estadoJogo.cartasCustomVerdade
+            : estadoJogo.cartasCustomDesafio;
+
+        const usarCustom = Math.random() > 0.7 && cartasCustom.length > 0;
+        const lista      = usarCustom ? cartasCustom : cartasBase;
+        const indice     = Math.floor(Math.random() * lista.length);
+
+        return lista[indice];
+    }
+
+    function resolverAlvo(frase) {
+        const outros = estadoJogo.jogadores.filter((_, i) => i !== estadoJogo.turnoAtual);
+        const nomeAlvo = outros.length > 0
+            ? outros[Math.floor(Math.random() * outros.length)].nome
+            : 'alguém';
+
+        return frase.replace(/\[ALVO\]/gi, nomeAlvo);
+    }
+
+    function iniciarTurno(tipo) {
+        const frase  = sortearCarta(tipo);
+        const textão = resolverAlvo(frase);
+
+        document.getElementById('texto-carta').textContent = textão;
+        document.getElementById('carta-principal').classList.add('virada');
+
+        estadoJogo.tipoTurnoAtual = tipo;
+
+        document.getElementById('controles-sorteio').classList.add('oculto');
+        document.getElementById('controles-validacao').classList.remove('oculto');
+
+        tocarSom(200, 0.5);
+    }
+
+    /* ================================================================
+       LÓGICA DE JOGO — FINALIZAR TURNO
+    ================================================================ */
+
+    function calcularPontos(tipo, sucesso) {
+        const valor = PONTOS_POR_TIPO[tipo];
+        return sucesso ? valor : -valor;
+    }
+
+    function verificarVitoria() {
+        const jogadorAtual = estadoJogo.jogadores[estadoJogo.turnoAtual];
+        return jogadorAtual.pontos >= estadoJogo.metaPontos;
+    }
+
+    function avancarTurno() {
+        estadoJogo.turnoAtual = (estadoJogo.turnoAtual + 1) % estadoJogo.jogadores.length;
+    }
+
+    function finalizarTurno(sucesso) {
+        const delta = calcularPontos(estadoJogo.tipoTurnoAtual, sucesso);
+        estadoJogo.jogadores[estadoJogo.turnoAtual].pontos += delta;
+
+        if (verificarVitoria()) {
+            mostrarTelaFinal();
+            guardarEstado();
+            return;
+        }
+
+        avancarTurno();
+        resetarCarta();
+        atualizarPlacar();
+        guardarEstado();
+    }
+
+    function resetarCarta() {
+        document.getElementById('carta-principal').classList.remove('virada');
+        document.getElementById('controles-validacao').classList.add('oculto');
+
+        setTimeout(() => {
+            document.getElementById('controles-sorteio').classList.remove('oculto');
+        }, 800);
+    }
+
+    /* ================================================================
+       LÓGICA DE JOGO — TELA FINAL
+    ================================================================ */
+
+    function encontrarVencedor() {
+        return [...estadoJogo.jogadores].sort((a, b) => b.pontos - a.pontos)[0];
+    }
+
+    function encontrarPerdedor() {
+        return [...estadoJogo.jogadores].sort((a, b) => a.pontos - b.pontos)[0];
+    }
+
+    function mostrarTelaFinal() {
+        document.getElementById('tela-jogo').classList.add('oculto');
+        document.getElementById('placar').classList.add('oculto');
+        document.getElementById('tela-final').classList.remove('oculto');
+
+        const vencedor = encontrarVencedor();
+        const perdedor = encontrarPerdedor();
+
+        document.getElementById('nome-vencedor').textContent = 'VENCEDOR: ' + vencedor.nome;
+        document.getElementById('nome-perdedor').textContent = perdedor.nome;
+        document.getElementById('texto-castigo').textContent =
+            'Bebe um shot e deixa o vencedor tirar-te uma foto engraçada.';
+
+        estadoJogo.jogoAtivo = false;
+    }
+
+    /* ================================================================
+       RESET
+    ================================================================ */
+
+    function reiniciarJogo() {
+        localStorage.removeItem(CHAVE_STORAGE);
+        location.reload();
+    }
+
+    /* ================================================================
+       LIGAÇÃO DE EVENTOS (addEventListener — sem onclick no HTML)
+    ================================================================ */
+
+    function ligarEventos() {
+        // Setup
+        document.getElementById('btn-adicionar')
+            .addEventListener('click', adicionarJogador);
+
+        document.getElementById('campo-nome')
+            .addEventListener('keypress', e => { if (e.key === 'Enter') adicionarJogador(); });
+
+        document.getElementById('btn-guardar-carta')
+            .addEventListener('click', guardarCartaCustom);
+
+        document.getElementById('btn-iniciar')
+            .addEventListener('click', iniciarJogo);
+
+        // Jogo
+        document.getElementById('btn-verdade')
+            .addEventListener('click', () => iniciarTurno('v'));
+
+        document.getElementById('btn-desafio')
+            .addEventListener('click', () => iniciarTurno('d'));
+
+        document.getElementById('btn-sim')
+            .addEventListener('click', () => finalizarTurno(true));
+
+        document.getElementById('btn-nao')
+            .addEventListener('click', () => finalizarTurno(false));
+
+        // Placar
+        document.getElementById('btn-recomecar')
+            .addEventListener('click', reiniciarJogo);
+
+        // Final
+        document.getElementById('btn-nova-partida')
+            .addEventListener('click', reiniciarJogo);
+    }
+
+    /* ================================================================
+       INICIALIZAÇÃO
+    ================================================================ */
+
+    window.addEventListener('load', () => {
+        criarBotoesNivel();
+        ligarEventos();
+        carregarEstado();
+    });
+    </script>
+</body>
+</html>
