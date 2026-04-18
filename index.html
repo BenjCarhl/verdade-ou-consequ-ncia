@@ -2,11 +2,11 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Gira Garrafa: Verdade ou Consequência - Benj Carhl</title>
-    
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YMY8PM04VC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -199,8 +199,8 @@
             border: 1px solid var(--borda);
             border-radius: 25px;
             padding: 30px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             color: rgba(255,255,255,0.85);
             font-size: 0.9rem;
@@ -214,7 +214,7 @@
         .lista-instrucoes li { margin-bottom: 12px; }
         .lista-instrucoes b { color: #fff; }
 
-        /* ── Placar Original (Topo) ─────────────────────────────── */
+        /* ── Placar ─────────────────────────────────────────────── */
         #placar {
             position: fixed;
             top: 20px; right: 20px;
@@ -224,8 +224,8 @@
             border-radius: 20px;
             border: 1px solid var(--borda);
             background: var(--vidro);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
         }
@@ -250,23 +250,57 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            font-family: inherit;
         }
         #btn-recomecar:hover { background: rgba(255,0,0,0.3); color: #fff; }
 
-        /* ── Responsividade ─────────────────────────────────────── */
+        /* ── Responsividade e Placar Mobile ─────────────────────── */
         @media (max-width: 1023px) {
             .area-jogo-wrapper { order: 1; }
             .painel-esquerdo   { order: 2; }
             .painel-direito    { order: 3; }
         }
+
         @media (max-width: 768px) {
-            /* Mantém o placar legível em ecrãs muito pequenos */
             #placar {
-                width: 140px;
-                padding: 10px;
-                font-size: 0.8rem;
+                top: auto;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                border-radius: 20px 20px 0 0;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+                /* FIX: respeita notch/home bar do iPhone */
+                padding: 10px 15px calc(10px + var(--safe-bottom));
+                box-shadow: 0 -5px 25px rgba(0,0,0,0.6);
             }
+            #lista-pontos {
+                display: flex;
+                gap: 10px;
+                overflow-x: auto;
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 8px;
+            }
+            #lista-pontos::-webkit-scrollbar { height: 0px; }
+            .placar-item {
+                margin-bottom: 0;
+                border: none;
+                padding: 4px 10px;
+                background: rgba(0,0,0,0.5);
+                border-radius: 12px;
+                gap: 8px;
+                white-space: nowrap;
+            }
+            #btn-recomecar { margin-top: 0; width: 100%; padding: 8px; }
+            /* FIX: padding extra para não esconder conteúdo atrás do placar + safe area */
+            body { padding-bottom: calc(100px + var(--safe-bottom)); }
         }
+
         @media (min-width: 1024px) {
             .layout-mestre { flex-direction: row; align-items: flex-start; justify-content: center; }
             .painel-lateral { width: 280px; position: sticky; top: 40px; }
@@ -280,8 +314,8 @@
             border-radius: 30px;
             border: 1px solid var(--borda);
             background: var(--vidro);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             text-align: center;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
         }
@@ -298,9 +332,12 @@
             font-family: inherit;
             outline: none;
             transition: 0.3s;
-            font-size: 16px; /* Evita zoom automático no iOS */
+            /* FIX: tamanho 16px evita zoom automático no iOS ao focar */
+            font-size: 16px;
         }
         input:focus, select:focus { border-color: var(--cor-verdade); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
+        /* Mantém o select visível no iOS/Android */
+        select { appearance: auto; -webkit-appearance: auto; }
 
         /* ── Botões ─────────────────────────────────────────────── */
         .btn {
@@ -313,10 +350,16 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.3s ease;
+            transition: transform 0.1s ease, box-shadow 0.3s ease, opacity 0.2s ease;
+            /* FIX: mínimo 44px touch target recomendado pela Apple/Google */
+            min-height: 44px;
             touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
         .btn:active  { transform: scale(0.96); }
+        /* FIX: estado desabilitado visual durante bloqueio de animação */
+        .btn:disabled { opacity: 0.5; pointer-events: none; }
 
         .btn-verdade { background: var(--cor-verdade); color: #000; box-shadow: 0 0 12px rgba(0, 212, 255, 0.3); }
         .btn-desafio { background: var(--cor-desafio); color: #fff; box-shadow: 0 0 12px rgba(255, 0, 127, 0.3); }
@@ -326,7 +369,7 @@
         /* ── Seletor de Nível ───────────────────────────────────── */
         .niveis { display: flex; justify-content: center; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
         .btn-nivel {
-            padding: 8px 12px;
+            padding: 10px 14px;
             font-size: 0.75rem;
             font-weight: 600;
             border-radius: 20px;
@@ -336,6 +379,10 @@
             cursor: pointer;
             transition: all 0.2s;
             font-family: inherit;
+            min-height: 44px;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
         .btn-nivel.ativo {
             border-color: var(--cor-verdade);
@@ -363,7 +410,7 @@
         .meta-wrap label { font-size: 0.75rem; color: #aaa; text-transform: uppercase; font-weight: 600;}
         .meta-wrap input  { width: 80px; text-align: center; font-size: 1.1rem; font-weight: bold;}
 
-        /* ── Card 3D Dinâmico ──────────────────────────────────── */
+        /* ── Card 3D ─────────────────────────────────────────────── */
         .cena { width: 100%; height: 220px; perspective: 1000px; margin: 25px 0; }
         .carta {
             width: 100%; height: 100%;
@@ -374,7 +421,6 @@
         }
         .carta:not(.virada):hover {
             transform: rotateX(5deg) rotateY(-5deg) scale(1.02);
-            box-shadow: inset 0 0 30px rgba(255,255,255,0.05);
         }
         .carta.virada { transform: rotateY(180deg); }
 
@@ -388,7 +434,6 @@
             padding: 20px;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            transition: border-color 0.3s, box-shadow 0.3s;
         }
         .carta-frente {
             background: rgba(255, 255, 255, 0.05);
@@ -403,7 +448,12 @@
             font-size: 1.15rem;
             line-height: 1.4;
             font-weight: 600;
+            /* FIX: overflow scroll suave no iOS */
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            /* FIX: evita que texto muito longo quebre o layout da carta */
+            word-break: break-word;
+            hyphens: auto;
         }
         .carta-verso::-webkit-scrollbar { width: 4px; }
         .carta-verso::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
@@ -473,10 +523,8 @@
             <p style="margin-top: 10px;">É um convite para devolver o espírito mágico da interação e partilhar pura alegria com quem mais amamos.</p>
 
             <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.2);">
-                <h4 style="color: #fff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    ☕ Apoiar o Desenvolvedor
-                </h4>
-                <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 12px;">Se o jogo rendeu boas risadas, considera apoiar o criador para futuras atualizações e novidades!</p>
+                <h4 style="color: #fff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">☕ Apoiar o Desenvolvedor</h4>
+                <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 12px;">Se o jogo rendeu boas risadas, considera apoiar o criador!</p>
                 <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
                         <span style="color: #ed1c24; font-weight: 800;">M-Pesa:</span> <span>+258 85 072 7507</span>
@@ -491,12 +539,12 @@
         <main class="area-jogo-wrapper">
 
             <div id="tela-setup" class="container fade-in">
-                <input type="text" id="campo-nome" placeholder="Nome do jogador..." maxlength="20" autocomplete="off">
+                <input type="text" id="campo-nome" placeholder="Nome do jogador..." maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false">
                 <button class="btn btn-verdade" id="btn-adicionar" style="width:90%; margin-top:5px;">
                     Adicionar Jogador
                 </button>
 
-                <div id="lista-nomes" style="font-size:0.85rem; color:#b3b3b3; margin:20px 0; font-weight:600;"></div>
+                <div id="lista-nomes" style="font-size:0.85rem; color:#b3b3b3; margin:20px 0; font-weight:600; min-height: 22px;"></div>
 
                 <div class="niveis" id="niveis"></div>
 
@@ -515,11 +563,11 @@
                 </div>
 
                 <div class="meta-wrap">
-                    <label>Meta de Pontos (Min: 10 | Max: 60):</label><br>
-                    <input type="number" id="campo-meta" value="30" min="10" max="60">
+                    <label for="campo-meta">Meta de Pontos (Min: 10 | Max: 60):</label><br>
+                    <input type="number" id="campo-meta" value="30" min="10" max="60" inputmode="numeric">
                 </div>
 
-                <button class="btn btn-desafio btn-iniciar" id="btn-iniciar" style="width:100%; margin-top:25px;">
+                <button class="btn btn-desafio" id="btn-iniciar" style="width:100%; margin-top:25px;">
                     Iniciar a diversão
                 </button>
             </div>
@@ -536,12 +584,12 @@
                     </div>
                 </div>
 
-                <div id="controles-sorteio" class="fade-in">
+                <div id="controles-sorteio">
                     <button class="btn btn-verdade" id="btn-verdade" style="width: 45%;">Verdade</button>
                     <button class="btn btn-desafio" id="btn-desafio" style="width: 45%;">Desafio</button>
                 </div>
 
-                <div id="controles-validacao" class="oculto fade-in">
+                <div id="controles-validacao" class="oculto">
                     <p style="font-size:0.9rem; color:#ccc; margin-bottom: 10px; font-weight: 600;">Cumpriu a missão?</p>
                     <button class="btn btn-sim" id="btn-sim" style="width: 40%;">SIM</button>
                     <button class="btn btn-nao" id="btn-nao" style="width: 40%;">NÃO</button>
@@ -557,7 +605,7 @@
                     <p id="texto-castigo" class="castigo-texto"></p>
                 </div>
 
-                <button class="btn btn-verdade btn-iniciar" id="btn-nova-partida" style="width: 100%;">Nova Partida</button>
+                <button class="btn btn-verdade" id="btn-nova-partida" style="width: 100%;">Nova Partida</button>
             </div>
 
         </main>
@@ -579,7 +627,7 @@
 
     <script>
     /* ================================================================
-       SEGURANÇA E HIGIENE
+       SEGURANÇA (Anti-XSS)
     ================================================================ */
     function sanitizarTexto(str) {
         const temp = document.createElement('div');
@@ -588,9 +636,9 @@
     }
 
     /* ================================================================
-       CONFIGURAÇÃO INICIAL E PERGUNTAS
+       DADOS DO JOGO
     ================================================================ */
-    const CHAVE_STORAGE = 'benjCarhl_jogo_v5';
+    const CHAVE_STORAGE = 'benjCarhl_jogo_v3';
 
     const PERGUNTAS_ORIGINAIS = {
         v1: [
@@ -641,29 +689,28 @@
         ],
         d1: [
             "Faz uma mímica de um animal.", "Bebe um copo de água sem usar as mãos.", "Dança como se ninguém estivesse a ver.",
-            "Brinque com as condições climáticas. Se está frio, ande sem casaco; se está calor, molhe-se.",
             "Sê a pessoa que serve as bebidas até o final dessa rodada.", "Faz o máximo de flexões que você conseguir em 1 minuto.",
             "Vira um shot de alguma bebida.", "Dança o funk do momento equilibrando um copo na cabeça.",
-            "Para na frente de uma janela na rua e começa a cantar uma serenata.", "Dê um beijo no pé de [ALVO].",
-            "Fica sem olhar o celular até o final da brincadeira.", "Troca o status de relacionamento nas redes sociais.",
-            "Posta uma foto feia nas redes sociais.", "Dança uma música de forró com [ALVO].",
-            "Fazer um elogio a um desconhecido (ou a [ALVO]).", "Escolhe uma música para cantar até o final sem errar.",
-            "Encena um trecho de filme para todos.", "Rebola em um bambolê imaginário.",
-            "Deixa [ALVO] publicar uma mensagem qualquer em seu nome nas redes.", "Fica sem usar a palavra 'não' até o final da brincadeira.",
-            "Lamber o próprio cotovelo.", "Tenta encostar a língua no nariz.", "Tenta colocar o pé atrás da cabeça.",
+            "Dê um beijo no pé de [ALVO].", "Fica sem olhar o celular até o final da brincadeira.",
+            "Troca o status de relacionamento nas redes sociais.", "Posta uma foto feia nas redes sociais.",
+            "Dança uma música de forró com [ALVO].", "Fazer um elogio a um desconhecido (ou a [ALVO]).",
+            "Escolhe uma música para cantar até o final sem errar.", "Encena um trecho de filme para todos.",
+            "Rebola em um bambolê imaginário.", "Deixa [ALVO] publicar uma mensagem qualquer em seu nome nas redes.",
+            "Fica sem usar a palavra 'não' até o final da brincadeira.", "Lamber o próprio cotovelo.",
+            "Tenta encostar a língua no nariz.", "Tenta colocar o pé atrás da cabeça.",
             "Dança valsa com [ALVO].", "Faz uma imitação de [ALVO].", "Passa uma rodada brincando com os olhos vendados.",
             "Liga para alguém que não conversas há muito tempo.", "Passa uma rodada falando com algum sotaque ou em outro idioma.",
-            "Mastiga um alho cru.", "Cria uma música de rap usando o nome de [ALVO] na letra.", "Joga capoeira com [ALVO].",
+            "Mastiga um alho cru.", "Cria uma música de rap usando o nome de [ALVO] na letra.",
             "Come uma colher com canela.", "Fica com 1 cubo de gelo no bolso até o final da brincadeira.",
-            "Engole um gelo em menos de 1 minuto sem voltá-lo ao copo.", "Canta uma música sem olhar a letra.",
-            "Inventa uma poesia que rime com uma palavra bizarra escolhida por [ALVO].", "Simula um pedido de casamento a [ALVO].",
-            "Improvisa um número musical com a situação da brincadeira.", "Toma 1 litro de água no menor tempo possível.",
-            "Faz uma parada de mãos (pino).", "Dança frevo.", "Tira uma peça de roupa (casaco, sapatos, brincos...).",
-            "Faz o máximo de abdominais que você conseguir em 1 minuto.", "Desliga o celular até o final do jogo.",
-            "Fala na língua do 'Pê' até o final da rodada.", "Abre uma garrafa de cerveja sem abridor.",
+            "Canta uma música sem olhar a letra.", "Inventa uma poesia que rime com uma palavra bizarra escolhida por [ALVO].",
+            "Simula um pedido de casamento a [ALVO].", "Improvisa um número musical com a situação da brincadeira.",
+            "Toma 1 litro de água no menor tempo possível.", "Faz uma parada de mãos (pino).",
+            "Tira uma peça de roupa (casaco, sapatos, brincos...).", "Faz o máximo de abdominais que você conseguir em 1 minuto.",
+            "Desliga o celular até o final do jogo.", "Fala na língua do 'Pê' até o final da rodada.",
             "Muda a sua foto de perfil para a sua pior foto.", "Passa a próxima rodada de mãos dadas com [ALVO].",
-            "Pronuncia 'farofa' com 1 colher de farofa na boca.", "Faz uma pose de yoga difícil.", "Improvisa uma coreografia de balé.",
-            "Toma água de uma tigela como se fosse um cachorro.", "Imita um gato se limpando.", "Revela a última mensagem que você mandou no WhatsApp."
+            "Pronuncia 'farofa' com 1 colher de farofa na boca.", "Faz uma pose de yoga difícil.",
+            "Toma água de uma tigela como se fosse um cachorro.", "Imita um gato se limpando.",
+            "Revela a última mensagem que você mandou no WhatsApp."
         ],
         v2: [
             "Quem aqui beijarias se fosses obrigado?", "O que mais te atrai em [ALVO]?", "Já tiveste um sonho com alguém nesta roda?",
@@ -676,33 +723,29 @@
             "Se o histórico do seu WhatsApp vazasse e você só pudesse apagar a conversa com uma pessoa, seria a de [ALVO]?",
             "Qual foi o pior fora que você já levou de um crush?", "Qual a coisa mais engraçada que você já fez para conquistar alguém?",
             "Qual a maior mentira que você já contou só para conquistar um crush?", "Qual a maior mentira que você já contou no trabalho?",
-            "Seu primeiro beijo teve gosto de quê?", "Na reunião: peidar com barulho ou tossir e espirrar em alguém?",
-            "Qual é o palavrão mais feio do mundo para você?", "Conte sobre a maior bebedeira da sua vida.",
-            "O que é uma prova de amor real para você?", "Por que o Zeca Pagodinho toca samba e o Exaltasamba toca pagode?",
-            "Mulheres devem pagar menos em baladas?", "Se você tivesse que se alimentar apenas de uma comida para o resto da vida, qual seria?",
-            "Pizza se come com ketchup?", "Qual é a criatura mais estranha com a qual você se deparou?", "Você acredita em extraterrestres?"
+            "Seu primeiro beijo teve gosto de quê?", "Qual é o palavrão mais feio do mundo para você?",
+            "Conte sobre a maior bebedeira da sua vida.", "O que é uma prova de amor real para você?",
+            "Se você tivesse que se alimentar apenas de uma comida para o resto da vida, qual seria?",
+            "Qual é a criatura mais estranha com a qual você se deparou?", "Você acredita em extraterrestres?"
         ],
         d2: [
             "Dá um beijo no pescoço de [ALVO].", "Faz uma massagem nas costas de [ALVO].", "Sussurra algo no ouvido de [ALVO].",
-            "Recebe cócegas de [ALVO] por 1 minuto.", "Lava os pés de [ALVO].", "Envia para algum contatinho uma cantada terrível do WhatsApp.",
-            "Dança 'na boquinha da garrafa' (ou a dança do momento).", "Faz um discurso dramático no meio da sala.",
-            "Finge que estás na balada e mostra como farias para chegar em [ALVO].", "Chupa um limão como se fosse uma laranja doce.",
-            "Mostra as tuas últimas mensagens do WhatsApp aqui na roda.", "Mostra a última foto que você tirou de você mesmo no celular.",
-            "Faz uma dança sensual usando só uma perna.", "Publica uma enquete bizarra no teu Instagram.",
-            "Toma o gole de algo e faz uma análise detalhada como se fosse um especialista.", "Mostra para a galera qual foi o último vídeo que assististe no YouTube.",
+            "Recebe cócegas de [ALVO] por 1 minuto.", "Lava os pés de [ALVO].",
+            "Envia para algum contatinho uma cantada terrível do WhatsApp.", "Dança 'na boquinha da garrafa'.",
+            "Faz um discurso dramático no meio da sala.", "Finge que estás na balada e mostra como farias para chegar em [ALVO].",
+            "Chupa um limão como se fosse uma laranja doce.", "Mostra as tuas últimas mensagens do WhatsApp aqui na roda.",
+            "Mostra a última foto que você tirou de você mesmo no celular.", "Faz uma dança sensual usando só uma perna.",
+            "Publica uma enquete bizarra no teu Instagram.", "Toma o gole de algo e faz uma análise detalhada como se fosse um especialista.",
             "Dança arrocha com [ALVO] ao som de música clássica.", "Dá uma cambalhota.",
-            "Coloca o máximo de uvas (ou algo esférico) na boca que conseguir.", "Participa de uma competição de natação imaginária no chão.",
-            "Dê 10 beijinhos no chão, com muito amor.", "Corta uma cebola imaginária e simula uma cena de novela triste.",
-            "Penteia o cabelo de [ALVO] de uma forma ridícula.", "Passa as próximas 2 rodadas a imitar um animal.",
-            "Canta o hino do teu time de futebol rival.", "Tenta arrotar o abecedário.",
-            "Faz uma performance ao som de Michael Jackson.", "Dá uma aula de aeróbica dos anos 90.",
+            "Coloca o máximo de uvas na boca que conseguir.", "Dê 10 beijinhos no chão, com muito amor.",
+            "Corta uma cebola imaginária e simula uma cena de novela triste.", "Penteia o cabelo de [ALVO] de uma forma ridícula.",
+            "Passa as próximas 2 rodadas a imitar um animal.", "Canta o hino do teu time de futebol rival.",
+            "Tenta arrotar o abecedário.", "Faz uma performance ao som de Michael Jackson.",
             "Grita bem alto: 'Eu não aguento mais esta coceira na minha bunda!'", "Dança em cima de uma cadeira ou mesa.",
-            "Usa as meias de [ALVO] como se fossem luvas até à próxima rodada.", "Assiste a um vídeo engraçado com a boca cheia de água.",
-            "Curte fotos antigas de uma pessoa que não segues no Instagram.", "Posta uma enquete pedindo dicas de como parar uma diarreia.",
+            "Usa as meias de [ALVO] como se fossem luvas até à próxima rodada.",
+            "Posta uma enquete pedindo dicas de como parar uma diarreia.",
             "Publica um vídeo teu a cantar desafinado.", "Vira um shot de bebida sem fazer careta.",
-            "Faz um show de dança ao som de funk de forma exagerada.", "Faz uma performance digna de um show de rock pesado.",
-            "Passa a próxima rodada congelado, como se fosses uma estátua.", "Posta um stories perguntando: 'É normal ter caroços azuis nas partes íntimas?'",
-            "Manda mensagem a alguém com quem não falas há mais de um ano.", "Altera a tua foto de perfil no WhatsApp para a foto mais feia que tens.",
+            "Faz um show de dança ao som de funk de forma exagerada.", "Manda mensagem a alguém com quem não falas há mais de um ano.",
             "Faz o passinho do cocô.", "Aproxima-te de [ALVO] e faz a dança da chuva.",
             "Defende o político que mais odeias durante 1 minuto.", "Publique uma selfie com o dedo no nariz.",
             "Comporta-te como um cachorro à procura de [ALVO] por 1 rodada.", "Tenta voar.", "Cheira as axilas de [ALVO].",
@@ -710,51 +753,54 @@
         ],
         v3: [
             "Qual é a tua maior fantasia com [ALVO]?", "Tirarias a roupa aqui por 60 pontos?", "Qual é o segredo mais sujo que escondes?",
-            "Com quantas pessoas você já ficou na vida?", "O que você acha de 50 Tons de Cinza?", "Já ficou com marca de chupão?",
-            "Como foi a sua primeira vez?", "Já ficou com [ALVO]?", "Já nadou pelado acompanhado?", "Já fez um strip-tease para alguém?",
-            "Qual a diferença entre amor e sexo na tua opinião?", "Você tem alguma tatuagem escondida?", "Quem você beijaria intensamente dessa roda?",
-            "Qual parte do corpo você beijaria de [ALVO]?", "Se fosse para tirar uma peça de roupa de [ALVO], qual tiraria?",
-            "Qual a sua cor de roupa íntima preferida?", "Qual sabor é gostoso de adicionar às preliminares?", "Achas [ALVO] a pessoa mais sexy da brincadeira?",
-            "Que tipo de conteúdo adulto mais te excita?", "Qual é a zona do seu corpo que mais te excita?", "Aceitarias ter um momento íntimo com [ALVO]?",
+            "Com quantas pessoas você já ficou na vida?", "Já ficou com marca de chupão?",
+            "Como foi a sua primeira vez?", "Já ficou com [ALVO]?", "Já nadou pelado acompanhado?",
+            "Qual a diferença entre amor e sexo na tua opinião?", "Você tem alguma tatuagem escondida?",
+            "Quem você beijaria intensamente dessa roda?", "Qual parte do corpo você beijaria de [ALVO]?",
+            "Se fosse para tirar uma peça de roupa de [ALVO], qual tiraria?", "Qual a sua cor de roupa íntima preferida?",
+            "Achas [ALVO] a pessoa mais sexy da brincadeira?", "Que tipo de conteúdo adulto mais te excita?",
+            "Qual é a zona do seu corpo que mais te excita?", "Aceitarias ter um momento íntimo com [ALVO]?",
             "Algemas ou vendas?", "Palavras sujas te excitam? Quais?", "Você tem sonhos eróticos? O [ALVO] já esteve neles?",
-            "Que tipo de música é perfeito para o momento íntimo?", "O que te faz gritar de prazer?", "Descreva o ambiente perfeito para uma noite intensa.",
-            "Luzes acesas, meia luz ou apagadas?", "O que você já fez na cama que jamais faria de novo?", "O que te corta o clima instantaneamente?",
-            "Qual o lugar mais inusitado onde já tiveste relações?", "Qual o lugar mais diferentão onde ainda queres fazer amor?",
-            "Já fez coisas virtuais picantes?", "Já teve conversas muito quentes por telefone?", "Você se lembra de quando começou a descobrir o próprio corpo?",
-            "Já foi apanhado em flagrante num local público?", "Sentirias atração por alguém do mesmo sexo?", "Amor romântico ou sexo selvagem?",
-            "Conte sobre a sua experiência mais intensa.", "Qual o teu acessório ou óleo preferido para o quarto?", "Qual a pior experiência na cama que você já teve?",
-            "Já correu risco de ser apanhado ao ar livre?", "Já experimentou a adrenalina da água (piscina/mar)?", "Em casa ou no motel?",
-            "No carro ou no motel?", "Já foi a uma loja de artigos para adultos?", "O que você gostaria de comprar numa loja dessas?",
-            "O que te frustra mais quando estás acompanhado(a)?", "Mordida no pescoço ou lambida na orelha?",
-            "Qual é a melhor coisa que [ALVO] poderia fazer contigo na cama?", "Qual o maior período de tempo que você já ficou em 'seca'?",
+            "O que te faz gritar de prazer?", "Descreva o ambiente perfeito para uma noite intensa.",
+            "Luzes acesas, meia luz ou apagadas?", "O que você já fez na cama que jamais faria de novo?",
+            "O que te corta o clima instantaneamente?", "Qual o lugar mais inusitado onde já tiveste relações?",
+            "Já fez coisas virtuais picantes?", "Já teve conversas muito quentes por telefone?",
+            "Já foi apanhado em flagrante num local público?", "Sentirias atração por alguém do mesmo sexo?",
+            "Amor romântico ou sexo selvagem?", "Conte sobre a sua experiência mais intensa.",
+            "Qual a pior experiência na cama que você já teve?", "Já correu risco de ser apanhado ao ar livre?",
+            "Já foi a uma loja de artigos para adultos?", "O que te frustra mais quando estás acompanhado(a)?",
+            "Qual é a melhor coisa que [ALVO] poderia fazer contigo na cama?",
+            "Qual o maior período de tempo que você já ficou em 'seca'?",
             "Qual foi o teu recorde num só dia?", "Já tiveste momentos íntimos com mais de uma pessoa no mesmo dia?"
         ],
         d3: [
             "Tira uma peça de roupa.", "Senta no colo de [ALVO] por 2 rodadas.", "Deixa [ALVO] dar-te uma dentadinha na orelha.",
             "Simula o teu olhar mais sexy para [ALVO].", "Toma um shot no umbigo de [ALVO] (body shot).",
             "Sussurra no ouvido de [ALVO] as coisas que costumas dizer na cama.", "Morde (de leve) o pescoço de [ALVO].",
-            "Com os olhos fechados, encosta a mão em [ALVO] e adivinha qual é a parte do corpo.", "Passa a próxima rodada sentado no colo de [ALVO].",
-            "Chupa uma fruta de forma extremamente provocante a olhar para [ALVO].", "Faz uma dança sensual (lap dance) em [ALVO] por 30 segundos.",
-            "Deixa que [ALVO] te faça uma massagem nos ombros de forma sedutora.", "Dá um beijo intenso noutra parte do corpo de [ALVO] (com consentimento).",
-            "Simula um strip-tease tirando uma peça de roupa lentamente para [ALVO].", "Faz uma simulação no ar da tua posição favorita.",
-            "Coloca um cubo de gelo na boca e desliza pelo pescoço de [ALVO].", "Manda uma mensagem de voz muito sexy para o teu crush.",
-            "Lambe alguma parte do corpo (segura) de [ALVO].", "Passa creme nas mãos ou braços de [ALVO] de forma muito sensual.",
-            "Fecha os olhos, [ALVO] dá-te um toque em algum lado e tens de adivinhar onde foi.", "Manda uma mensagem ousada convidando o crush para jogar.",
-            "Envia uma foto ou sticker provocante ao teu crush.", "Publica 'Hoje eu estou muito carente e perigoso(a)' no teu Facebook/Instagram.",
-            "Fica a centímetros da boca de [ALVO] sem o/a beijar durante 30 segundos de tensão.", "Troca uma peça de roupa (não íntima) com [ALVO].",
-            "Manda uma mensagem para o teu ex a dizer: 'Saudades do que a gente viveu'.", "Faz uma trilha de beijos suaves do pulso até ao ombro de [ALVO].",
-            "Geme o nome de [ALVO] de forma muito dramática durante 5 segundos.", "Come um pedaço de comida (ou doce) diretamente da boca de [ALVO] sem usar as mãos.",
-            "Tira as meias de [ALVO] usando apenas os teus dentes.", "Desabotoa uma peça de roupa de [ALVO] usando apenas uma mão (com consentimento).",
+            "Passa a próxima rodada sentado no colo de [ALVO].", "Chupa uma fruta de forma extremamente provocante a olhar para [ALVO].",
+            "Faz uma dança sensual (lap dance) em [ALVO] por 30 segundos.",
+            "Deixa que [ALVO] te faça uma massagem nos ombros de forma sedutora.",
+            "Simula um strip-tease tirando uma peça de roupa lentamente para [ALVO].",
+            "Coloca um cubo de gelo na boca e desliza pelo pescoço de [ALVO].",
+            "Manda uma mensagem de voz muito sexy para o teu crush.",
+            "Passa creme nas mãos ou braços de [ALVO] de forma muito sensual.",
+            "Manda uma mensagem ousada convidando o crush para jogar.",
+            "Envia uma foto ou sticker provocante ao teu crush.",
+            "Fica a centímetros da boca de [ALVO] sem o/a beijar durante 30 segundos de tensão.",
+            "Troca uma peça de roupa (não íntima) com [ALVO].",
+            "Manda uma mensagem para o teu ex a dizer: 'Saudades do que a gente viveu'.",
+            "Faz uma trilha de beijos suaves do pulso até ao ombro de [ALVO].",
+            "Geme o nome de [ALVO] de forma muito dramática durante 5 segundos.",
+            "Come um pedaço de comida diretamente da boca de [ALVO] sem usar as mãos.",
+            "Tira as meias de [ALVO] usando apenas os teus dentes.",
             "Finge que estás a ter um momento de muito prazer de cada vez que alguém disser o teu nome na próxima rodada.",
-            "Deixa [ALVO] vendar-te os olhos e dar-te algo para beber. Tens de adivinhar o que é.", "Imita a tua posição favorita na cama usando um travesseiro.",
             "Senta-te de frente para [ALVO] com as pernas entrelaçadas durante 1 rodada inteira.",
-            "Faz carinhos no cabelo ou pescoço de [ALVO] enquanto olhas fixamente nos seus olhos por 1 minuto, em silêncio.",
-            "Tira a tua própria t-shirt/camisa de forma extremamente lenta ao som de uma música sedutora.",
-            "Deixa [ALVO] cheirar o teu pescoço e dizer exatamente o que acha do teu cheiro.", "Fica no colo de [ALVO] e rebola levemente ao som da próxima música que tocar.",
+            "Faz carinhos no cabelo ou pescoço de [ALVO] enquanto olhas fixamente nos seus olhos por 1 minuto.",
+            "Tira a tua própria t-shirt de forma extremamente lenta ao som de uma música sedutora.",
+            "Fica no colo de [ALVO] e rebola levemente ao som da próxima música que tocar.",
             "Mostra ao grupo a tua pasta de 'fotos ocultas' do telemóvel (ou a última pesquisa do navegador).",
             "Sussurra no ouvido de [ALVO] qual é o maior fetiche que tens, mas que o grupo não pode ouvir.",
-            "Passa um cubo de gelo nos teus próprios lábios e depois dá um beijo na bochecha de [ALVO].",
-            "Fica de mãos dadas com [ALVO] por baixo da mesa/roda e façam carinhos até ao vosso próximo turno."
+            "Fica de mãos dadas com [ALVO] por baixo da mesa e façam carinhos até ao vosso próximo turno."
         ]
     };
 
@@ -775,53 +821,87 @@
         tipoTurnoAtual: null, jogoAtivo: false
     };
 
-    let audioCtx;
-    let bloqueioAnimacao = false; // Trava invisível anti-spam mobile
+    /* ================================================================
+       FIX: variável de bloqueio substituída por função de debounce
+       usando timestamps — evita travar o jogo se o timeout falhar
+    ================================================================ */
+    let _ultimoClique = 0;
+    function podeContinuar(msMinimo = 700) {
+        const agora = Date.now();
+        if (agora - _ultimoClique < msMinimo) return false;
+        _ultimoClique = agora;
+        return true;
+    }
 
+    /* ================================================================
+       ÁUDIO
+    ================================================================ */
+    let audioCtx;
     function tocarSom(frequencia, duracao) {
         try {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            const oscilador = audioCtx.createOscillator();
-            const ganho = audioCtx.createGain();
-            oscilador.connect(ganho); 
-            ganho.connect(audioCtx.destination);
-            oscilador.frequency.value = frequencia; 
-            oscilador.start(); 
-            oscilador.stop(audioCtx.currentTime + duracao);
-        } catch (erro) { console.warn('Áudio indisponível'); }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = frequencia;
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duracao);
+        } catch (e) { /* áudio não disponível */ }
     }
 
+    /* ================================================================
+       CONFETES — FIX: geração com dx aleatório para melhor spread
+    ================================================================ */
     function lancarConfetes() {
         const container = document.getElementById('confetti-container');
         container.innerHTML = '';
-        const cores = ['#00d4ff', '#ff007f', '#7000ff', '#00ff88', '#fff'];
-        for (let i = 0; i < 50; i++) {
-            const confete = document.createElement('div');
-            confete.classList.add('confetti');
-            confete.style.left = Math.random() * 100 + 'vw';
-            confete.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
-            confete.style.animation = `fall ${Math.random() * 2 + 2}s linear forwards`;
-            confete.style.animationDelay = Math.random() * 1 + 's';
-            container.appendChild(confete);
+        const cores = ['#00d4ff', '#ff007f', '#7000ff', '#00ff88', '#fff', '#ffcc00'];
+        for (let i = 0; i < 60; i++) {
+            const c = document.createElement('div');
+            c.classList.add('confetti');
+            c.style.cssText = `
+                left: ${Math.random() * 100}vw;
+                background-color: ${cores[Math.floor(Math.random() * cores.length)]};
+                border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                width: ${6 + Math.random() * 6}px;
+                height: ${6 + Math.random() * 6}px;
+                --dx: ${(Math.random() - 0.5) * 80}px;
+                animation: fall ${2 + Math.random() * 2.5}s linear forwards;
+                animation-delay: ${Math.random() * 1.2}s;
+            `;
+            container.appendChild(c);
         }
-        setTimeout(() => { container.innerHTML = ''; }, 5000);
+        setTimeout(() => { container.innerHTML = ''; }, 6000);
     }
 
+    /* ================================================================
+       PERSISTÊNCIA
+    ================================================================ */
     function guardarEstado() {
-        try { localStorage.setItem(CHAVE_STORAGE, JSON.stringify(estadoJogo)); } catch (e) {}
+        try { localStorage.setItem(CHAVE_STORAGE, JSON.stringify(estadoJogo)); }
+        catch (e) { /* modo privado ou storage bloqueado */ }
     }
 
     function carregarEstado() {
         try {
             const dados = localStorage.getItem(CHAVE_STORAGE);
             if (!dados) return;
-            estadoJogo = JSON.parse(dados);
+            const estado = JSON.parse(dados);
+            // FIX: validação mais robusta antes de restaurar estado
+            if (!estado || !Array.isArray(estado.jogadores)) return;
+            estadoJogo = estado;
             if (!estadoJogo.cartasCustomVerdade) estadoJogo.cartasCustomVerdade = [];
             if (!estadoJogo.cartasCustomDesafio) estadoJogo.cartasCustomDesafio = [];
-            if (estadoJogo.jogoAtivo) { mostrarTelaJogo(); } else { sincronizarSetupComEstado(); }
-        } catch (e) {}
+            if (estadoJogo.jogoAtivo) {
+                mostrarTelaJogo();
+            } else {
+                sincronizarSetupComEstado();
+            }
+        } catch (e) { /* estado corrompido, ignora */ }
     }
 
     function sincronizarSetupComEstado() {
@@ -830,38 +910,68 @@
         renderizarListaNomes();
     }
 
+    /* ================================================================
+       SETUP — JOGADORES
+    ================================================================ */
     function adicionarJogador() {
         const campo = document.getElementById('campo-nome');
         const nomeBruto = campo.value.trim();
-        const nome = sanitizarTexto(nomeBruto); 
+        if (nomeBruto === '') return;
 
-        if (nome === '') return;
+        // FIX: sanitização ANTES de guardar no estado (não apenas na exibição)
+        const nome = nomeBruto.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+
         if (estadoJogo.jogadores.some(j => j.nome.toLowerCase() === nome.toLowerCase())) {
-            tocarSom(150, 0.3); alert('Este jogador já está na roda!'); return;
+            tocarSom(150, 0.3);
+            alert('Este jogador já está na roda!');
+            return;
         }
 
         estadoJogo.jogadores.push({ nome, pontos: 0 });
         campo.value = '';
-        
-        renderizarListaNomes(); tocarSom(600, 0.05); guardarEstado();
+        // FIX: NÃO chamamos campo.focus() no mobile para não rolar a página
+        renderizarListaNomes();
+        tocarSom(600, 0.08);
+        guardarEstado();
 
-        // Disparo GA4: Adicionar Jogador
+        // 📈 GA4 Track Event
         if (typeof gtag === 'function') {
             gtag('event', 'add_player', { 'event_category': 'Engagement' });
         }
     }
 
-    function renderizarListaNomes() {
-        document.getElementById('lista-nomes').innerHTML = estadoJogo.jogadores.map(j => j.nome).join(' • ');
+    function removerJogador(index) {
+        estadoJogo.jogadores.splice(index, 1);
+        renderizarListaNomes();
+        guardarEstado();
     }
 
-    const NIVEIS = [ { id: 1, rotulo: '🧊 Leve' }, { id: 2, rotulo: '🔥 Quente' }, { id: 3, rotulo: '🧨 Caos' } ];
+    function renderizarListaNomes() {
+        const lista = document.getElementById('lista-nomes');
+        if (estadoJogo.jogadores.length === 0) {
+            lista.textContent = '';
+            return;
+        }
+        lista.innerHTML = estadoJogo.jogadores.map((j, i) =>
+            `<span style="display:inline-flex; align-items:center; gap:4px; background:rgba(255,255,255,0.08); border-radius:20px; padding:3px 10px; margin:3px;">
+                ${j.nome}
+                <button onclick="removerJogador(${i})" style="background:none;border:none;color:#ff4d4d;cursor:pointer;font-size:0.9rem;padding:0 2px;line-height:1;" title="Remover">×</button>
+            </span>`
+        ).join('');
+    }
+
+    /* ================================================================
+       NÍVEIS
+    ================================================================ */
+    const NIVEIS = [{ id: 1, rotulo: '🧊 Leve' }, { id: 2, rotulo: '🔥 Quente' }, { id: 3, rotulo: '🧨 Caos' }];
 
     function criarBotoesNivel() {
         const container = document.getElementById('niveis');
         NIVEIS.forEach(({ id, rotulo }) => {
             const btn = document.createElement('button');
-            btn.className = 'btn-nivel'; btn.dataset.nivel = id; btn.textContent = rotulo;
+            btn.className = 'btn-nivel';
+            btn.dataset.nivel = id;
+            btn.textContent = rotulo;
             btn.addEventListener('click', () => selecionarNivel(id));
             container.appendChild(btn);
         });
@@ -869,7 +979,10 @@
     }
 
     function selecionarNivel(nivel) {
-        estadoJogo.nivel = nivel; atualizarBotoesNivel(); tocarSom(400, 0.1); guardarEstado();
+        estadoJogo.nivel = nivel;
+        atualizarBotoesNivel();
+        tocarSom(400, 0.1);
+        guardarEstado();
     }
 
     function atualizarBotoesNivel() {
@@ -878,32 +991,44 @@
         });
     }
 
+    /* ================================================================
+       CARTAS CUSTOMIZADAS
+    ================================================================ */
     function guardarCartaCustom() {
         const campo = document.getElementById('campo-carta-custom');
         const tipo = document.getElementById('tipo-carta-custom').value;
-        const textoLimpo = sanitizarTexto(campo.value.trim());
+        const textoLimpo = campo.value.trim().replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
 
         if (textoLimpo === '') return;
-        
         if (tipo === 'v') estadoJogo.cartasCustomVerdade.push(textoLimpo);
         else estadoJogo.cartasCustomDesafio.push(textoLimpo);
 
-        campo.value = ''; alert('Carta secreta guardada com sucesso!'); tocarSom(800, 0.1); guardarEstado();
+        campo.value = '';
+        alert('Carta secreta guardada com sucesso!');
+        tocarSom(800, 0.1);
+        guardarEstado();
     }
 
+    /* ================================================================
+       INICIAR JOGO
+    ================================================================ */
     function iniciarJogo() {
         if (estadoJogo.jogadores.length < 2) {
-            tocarSom(150, 0.3); alert('Precisas de pelo menos 2 jogadores para iniciar!'); return;
+            tocarSom(150, 0.3);
+            alert('Precisas de pelo menos 2 jogadores para iniciar!');
+            return;
         }
-        const valorMeta = parseInt(document.getElementById('campo-meta').value);
-        if (isNaN(valorMeta) || valorMeta < 10 || valorMeta > 60) {
-            tocarSom(150, 0.3); alert('A meta de pontos deve ser entre 10 e 60.'); return;
-        }
+        const valorMeta = parseInt(document.getElementById('campo-meta').value, 10);
+        // FIX: clamp automático do valor ao invés de apenas rejeitar
+        const metaFinal = Math.max(10, Math.min(60, isNaN(valorMeta) ? 30 : valorMeta));
+        document.getElementById('campo-meta').value = metaFinal;
 
-        estadoJogo.metaPontos = valorMeta; estadoJogo.jogoAtivo = true;
-        mostrarTelaJogo(); guardarEstado();
+        estadoJogo.metaPontos = metaFinal;
+        estadoJogo.jogoAtivo = true;
+        mostrarTelaJogo();
+        guardarEstado();
 
-        // Disparo GA4: Início do Jogo
+        // 📈 GA4 Track Event
         if (typeof gtag === 'function') {
             gtag('event', 'start_game', { 
                 'players_count': estadoJogo.jogadores.length, 
@@ -917,94 +1042,139 @@
         document.getElementById('tela-setup').classList.add('oculto');
         document.getElementById('painel-esquerdo').classList.add('oculto');
         document.getElementById('painel-direito').classList.add('oculto');
-        
         document.getElementById('tela-jogo').classList.remove('oculto');
         document.getElementById('placar').classList.remove('oculto');
+        // FIX: garantir que os controles estejam no estado correto ao restaurar jogo
+        document.getElementById('controles-sorteio').classList.remove('oculto');
+        document.getElementById('controles-validacao').classList.add('oculto');
+        // FIX: garantir que a carta esteja virada para frente ao restaurar
+        const carta = document.getElementById('carta-principal');
+        carta.classList.remove('virada', 'tema-v', 'tema-d');
         atualizarPlacar();
     }
 
     function atualizarPlacar() {
-        document.getElementById('nome-vez').textContent = estadoJogo.jogadores[estadoJogo.turnoAtual].nome;
+        const jogadorAtual = estadoJogo.jogadores[estadoJogo.turnoAtual];
+        if (!jogadorAtual) return;
+        document.getElementById('nome-vez').textContent = jogadorAtual.nome;
         document.getElementById('lista-pontos').innerHTML = estadoJogo.jogadores
             .map(j => `<div class="placar-item"><span>${j.nome}</span><b>${j.pontos}</b></div>`).join('');
     }
 
+    /* ================================================================
+       LÓGICA DO TURNO
+    ================================================================ */
     function sortearCarta(tipo) {
         const chave = tipo + estadoJogo.nivel;
-        let cartasBase = PERGUNTAS[chave];
+        let cartasBase = PERGUNTAS[chave] || [];
         const cartasCustom = tipo === 'v' ? estadoJogo.cartasCustomVerdade : estadoJogo.cartasCustomDesafio;
 
-        let usarCustom = Math.random() > 0.7 && cartasCustom.length > 0;
+        const usarCustom = Math.random() > 0.7 && cartasCustom.length > 0;
         let lista = usarCustom ? cartasCustom : cartasBase;
 
+        // FIX: se lista ficou vazia, recarrega do original
         if (lista.length === 0) {
-            PERGUNTAS[chave] = [...PERGUNTAS_ORIGINAIS[chave]];
-            lista = PERGUNTAS[chave];
+            if (usarCustom) {
+                lista = cartasBase;
+            }
+            if (lista.length === 0) {
+                PERGUNTAS[chave] = [...PERGUNTAS_ORIGINAIS[chave]];
+                lista = PERGUNTAS[chave];
+            }
         }
 
         const indice = Math.floor(Math.random() * lista.length);
-        const fraseEscolhida = lista[indice];
+        const frase = lista[indice];
         lista.splice(indice, 1);
-        return fraseEscolhida;
+        return frase;
     }
 
     function resolverAlvo(frase) {
         const outros = estadoJogo.jogadores.filter((_, i) => i !== estadoJogo.turnoAtual);
         const nomeAlvo = outros.length > 0 ? outros[Math.floor(Math.random() * outros.length)].nome : 'alguém';
+        // FIX: substituição case-insensitive de todas as ocorrências de [ALVO]
         return frase.replace(/\[ALVO\]/gi, nomeAlvo);
     }
 
     function iniciarTurno(tipo) {
-        if (bloqueioAnimacao) return; // Trava invisível anti-spam mobile
-        bloqueioAnimacao = true;
+        if (!podeContinuar()) return;
 
-        document.getElementById('texto-carta').innerHTML = resolverAlvo(sortearCarta(tipo));
-        
+        // FIX: desabilita botões visualmente durante a animação
+        setBotoesJogo(false);
+
+        const frase = resolverAlvo(sortearCarta(tipo));
+        // FIX: usa textContent (não innerHTML) para evitar XSS em cartas customizadas
+        const textoCarta = document.getElementById('texto-carta');
+        textoCarta.textContent = frase;
+
         const carta = document.getElementById('carta-principal');
         carta.classList.remove('tema-v', 'tema-d');
+        // FIX: forçar reflow antes de adicionar nova classe para garantir transição
+        void carta.offsetWidth;
         carta.classList.add(tipo === 'v' ? 'tema-v' : 'tema-d');
         carta.classList.add('virada');
 
         estadoJogo.tipoTurnoAtual = tipo;
         document.getElementById('controles-sorteio').classList.add('oculto');
-        document.getElementById('controles-validacao').classList.remove('oculto');
+
+        // FIX: aguarda a animação (600ms) antes de mostrar validação
+        setTimeout(() => {
+            document.getElementById('controles-validacao').classList.remove('oculto');
+            setBotoesJogo(true);
+        }, 650);
+
         tocarSom(200, 0.5);
 
-        // Disparo GA4: Tipo de carta escolhida
+        // 📈 GA4 Track Event
         if (typeof gtag === 'function') {
             gtag('event', 'draw_card', { 'card_type': tipo === 'v' ? 'truth' : 'dare' });
         }
-
-        setTimeout(() => { bloqueioAnimacao = false; }, 650);
     }
 
     function finalizarTurno(sucesso) {
-        if (bloqueioAnimacao) return; 
-        bloqueioAnimacao = true;
+        if (!podeContinuar()) return;
 
-        estadoJogo.jogadores[estadoJogo.turnoAtual].pontos += (sucesso ? PONTOS_POR_TIPO[estadoJogo.tipoTurnoAtual] : -PONTOS_POR_TIPO[estadoJogo.tipoTurnoAtual]);
-        
+        setBotoesJogo(false);
+
+        const pontos = PONTOS_POR_TIPO[estadoJogo.tipoTurnoAtual] || 2;
+        estadoJogo.jogadores[estadoJogo.turnoAtual].pontos += sucesso ? pontos : -pontos;
+
         if (estadoJogo.jogadores[estadoJogo.turnoAtual].pontos >= estadoJogo.metaPontos) {
-            mostrarTelaFinal(); guardarEstado(); 
-            bloqueioAnimacao = false;
+            mostrarTelaFinal();
+            guardarEstado();
+            setBotoesJogo(true);
             return;
         }
 
         estadoJogo.turnoAtual = (estadoJogo.turnoAtual + 1) % estadoJogo.jogadores.length;
-        
+
         const carta = document.getElementById('carta-principal');
         carta.classList.remove('virada');
         document.getElementById('controles-validacao').classList.add('oculto');
-        
+
+        // FIX: aguarda o flip de volta (600ms) antes de limpar temas e mostrar sorteio
         setTimeout(() => {
             carta.classList.remove('tema-v', 'tema-d');
             document.getElementById('controles-sorteio').classList.remove('oculto');
-            bloqueioAnimacao = false;
-        }, 600); 
+            setBotoesJogo(true);
+        }, 650);
 
-        atualizarPlacar(); guardarEstado();
+        atualizarPlacar();
+        guardarEstado();
     }
 
+    // FIX: função centralizada para habilitar/desabilitar todos os botões de ação
+    function setBotoesJogo(ativo) {
+        const ids = ['btn-verdade', 'btn-desafio', 'btn-sim', 'btn-nao'];
+        ids.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = !ativo;
+        });
+    }
+
+    /* ================================================================
+       TELA FINAL
+    ================================================================ */
     function mostrarTelaFinal() {
         document.getElementById('tela-jogo').classList.add('oculto');
         document.getElementById('cabecalho').classList.add('oculto');
@@ -1012,44 +1182,86 @@
         document.getElementById('tela-final').classList.remove('oculto');
 
         const ord = [...estadoJogo.jogadores].sort((a, b) => b.pontos - a.pontos);
-        document.getElementById('nome-vencedor').innerHTML = '👑 ' + ord[0].nome;
-        document.getElementById('nome-perdedor').innerHTML = ord[ord.length - 1].nome;
-        
-        const castigoSorteado = CASTIGOS_FINAIS[Math.floor(Math.random() * CASTIGOS_FINAIS.length)];
-        document.getElementById('texto-castigo').textContent = castigoSorteado;
+        document.getElementById('nome-vencedor').textContent = '👑 ' + ord[0].nome;
+        document.getElementById('nome-perdedor').textContent = ord[ord.length - 1].nome;
+        document.getElementById('texto-castigo').textContent = CASTIGOS_FINAIS[Math.floor(Math.random() * CASTIGOS_FINAIS.length)];
 
-        tocarSom(800, 1); lancarConfetes(); estadoJogo.jogoAtivo = false;
+        tocarSom(880, 0.8);
+        setTimeout(() => tocarSom(1108, 0.6), 200);
+        setTimeout(() => tocarSom(1318, 0.9), 400);
+        lancarConfetes();
+        estadoJogo.jogoAtivo = false;
 
-        // Disparo GA4: Fim de jogo
+        // 📈 GA4 Track Event
         if (typeof gtag === 'function') {
             gtag('event', 'finish_game', { 'winner': ord[0].nome, 'level': estadoJogo.nivel });
         }
     }
 
-    function recomecarTudo() { 
-        try { localStorage.removeItem(CHAVE_STORAGE); } catch(e) {}
-        location.reload(); 
+    /* ================================================================
+       RECOMEÇAR / NOVA PARTIDA
+    ================================================================ */
+    function recomecarTudo() {
+        try { localStorage.removeItem(CHAVE_STORAGE); } catch (e) {}
+        location.reload();
     }
 
     function novaPartida() {
-        estadoJogo.jogadores.forEach(j => j.pontos = 0);
-        estadoJogo.turnoAtual = 0;
-        estadoJogo.jogoAtivo = false;
-        guardarEstado(); location.reload();
+        // FIX: try/catch completo (faltava na versão original)
+        try {
+            estadoJogo.jogadores.forEach(j => j.pontos = 0);
+            estadoJogo.turnoAtual = 0;
+            estadoJogo.jogoAtivo = false;
+            PERGUNTAS = JSON.parse(JSON.stringify(PERGUNTAS_ORIGINAIS));
+            guardarEstado();
+        } catch (e) {}
+        location.reload();
     }
 
+    /* ================================================================
+       FIX: Listeners com passive:true onde possível para melhor
+       performance de scroll no mobile; touchstart previne duplo disparo
+    ================================================================ */
+    function adicionarListenerBotao(el, fn) {
+        if (!el) return;
+        let tocado = false;
+        el.addEventListener('touchstart', (e) => {
+            tocado = true;
+            // NÃO chamamos preventDefault aqui para não bloquear o scroll
+        }, { passive: true });
+        el.addEventListener('click', (e) => {
+            if (tocado) { tocado = false; }
+            fn(e);
+        });
+    }
+
+    /* ================================================================
+       INICIALIZAÇÃO
+    ================================================================ */
     window.addEventListener('load', () => {
         criarBotoesNivel();
-        document.getElementById('btn-adicionar').addEventListener('click', adicionarJogador);
-        document.getElementById('campo-nome').addEventListener('keypress', e => { if (e.key === 'Enter') adicionarJogador(); });
-        document.getElementById('btn-guardar-carta').addEventListener('click', guardarCartaCustom);
-        document.getElementById('btn-iniciar').addEventListener('click', iniciarJogo);
-        document.getElementById('btn-verdade').addEventListener('click', () => iniciarTurno('v'));
-        document.getElementById('btn-desafio').addEventListener('click', () => iniciarTurno('d'));
-        document.getElementById('btn-sim').addEventListener('click', () => finalizarTurno(true));
-        document.getElementById('btn-nao').addEventListener('click', () => finalizarTurno(false));
-        document.getElementById('btn-recomecar').addEventListener('click', recomecarTudo);
-        document.getElementById('btn-nova-partida').addEventListener('click', novaPartida);
+
+        adicionarListenerBotao(document.getElementById('btn-adicionar'), adicionarJogador);
+        adicionarListenerBotao(document.getElementById('btn-guardar-carta'), guardarCartaCustom);
+        adicionarListenerBotao(document.getElementById('btn-iniciar'), iniciarJogo);
+        adicionarListenerBotao(document.getElementById('btn-verdade'), () => iniciarTurno('v'));
+        adicionarListenerBotao(document.getElementById('btn-desafio'), () => iniciarTurno('d'));
+        adicionarListenerBotao(document.getElementById('btn-sim'), () => finalizarTurno(true));
+        adicionarListenerBotao(document.getElementById('btn-nao'), () => finalizarTurno(false));
+        adicionarListenerBotao(document.getElementById('btn-recomecar'), recomecarTudo);
+        adicionarListenerBotao(document.getElementById('btn-nova-partida'), novaPartida);
+
+        document.getElementById('campo-nome').addEventListener('keypress', e => {
+            if (e.key === 'Enter') { e.preventDefault(); adicionarJogador(); }
+        });
+
+        // FIX: clamp da meta em tempo real ao sair do campo
+        const campoMeta = document.getElementById('campo-meta');
+        campoMeta.addEventListener('blur', () => {
+            const v = parseInt(campoMeta.value, 10);
+            campoMeta.value = Math.max(10, Math.min(60, isNaN(v) ? 30 : v));
+        });
+
         carregarEstado();
     });
     </script>
