@@ -1,1269 +1,1507 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Gira Garrafa: Verdade ou Consequência - Benj Carhl</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080810">
+<title>Gira Garrafa · Verdade ou Consequência</title>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YMY8PM04VC"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YMY8PM04VC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-      gtag('config', 'G-YMY8PM04VC');
-    </script>
+  gtag('config', 'G-YMY8PM04VC');
+</script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        /* ── Tokens ───────────────────────────────────────────── */
-        :root {
-            --cor-verdade: #00d4ff;
-            --cor-desafio: #ff007f;
-            --cor-roxo: #7000ff;
-            --bg: #050508;
-            --vidro: rgba(20, 20, 25, 0.65);
-            --borda: rgba(255, 255, 255, 0.15);
-            /* FIX: safe area para notch e barra home do iPhone */
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+<style>
+:root {
+  --c:     #ff2d6b;
+  --c2:    #00e5ff;
+  --c3:    #a855f7;
+  --gold:  #f59e0b;
+  --bg:    #080810;
+  --sf:    rgba(255,255,255,0.04);
+  --sf2:   rgba(255,255,255,0.08);
+  --bd:    rgba(255,255,255,0.1);
+  --bd2:   rgba(255,255,255,0.2);
+  --tx:    #f0f0f8;
+  --mu:    rgba(240,240,248,0.5);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+}
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            padding-top: 40px;
-            /* FIX: previne bounce scroll no iOS que causava glitch no bg */
-            overscroll-behavior: none;
-        }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--tx);
+  min-height:100%;
+  min-height:-webkit-fill-available;
+  overflow-x:hidden;
+  overscroll-behavior:none;
+  -webkit-font-smoothing:antialiased;
+}
 
-        /* ── Animações ─────────────────────────────────────────── */
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .fade-out { animation: fadeOut 0.4s ease-out forwards; }
+/* ── Gradiente de fundo leve (sem blur pesado) ── */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 0%, rgba(255,45,107,.10) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 90% 100%, rgba(0,229,255,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(168,85,247,.07) 0%, transparent 70%);
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to   { opacity: 0; transform: translateY(-15px); }
-        }
+/* ── Confetti ── */
+#confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+.c-piece{position:absolute;opacity:0;will-change:transform,opacity}
+@keyframes confFall{
+  0%  {opacity:1;top:-5%;transform:rotateZ(0deg) translateX(0)}
+  100%{opacity:.4;top:110%;transform:rotateZ(720deg) translateX(var(--xt,0px))}
+}
 
-        /* ── Fundo Animado ─────────────────────────────────────── */
-        .bg-animado {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1;
-            background: #05050a;
-            overflow: hidden;
-            transform: translateZ(0);
-        }
-        .orbita {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--cor) 0%, transparent 70%);
-            animation: flutuar 15s infinite alternate ease-in-out;
-            will-change: transform;
-            transform: translateZ(0);
-        }
-        .orbita-1 { --cor: rgba(0, 212, 255, 0.4); width: 60vw; height: 60vw; top: -15%; left: -15%; animation-duration: 12s; }
-        .orbita-2 { --cor: rgba(255, 0, 127, 0.4); width: 55vw; height: 55vw; bottom: -15%; right: -15%; animation-duration: 18s; animation-direction: alternate-reverse; }
-        .orbita-3 { --cor: rgba(112, 0, 255, 0.3); width: 45vw; height: 45vw; top: 30%; left: 30%; animation-duration: 20s; }
-        @keyframes flutuar {
-            0%   { transform: translate3d(0, 0, 0) scale(1); }
-            50%  { transform: translate3d(4vw, 4vh, 0) scale(1.1); }
-            100% { transform: translate3d(-4vw, 8vh, 0) scale(0.9); }
-        }
+/* ── App Shell ── */
+#app{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100dvh;
+  padding:0 16px calc(28px + var(--safe-b));
+  padding-top:max(20px,var(--safe-t));
+}
 
-        /* ── Confetes — FIX Safari iOS: usa position:fixed no wrapper ── */
-        #confetti-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            pointer-events: none;
-            z-index: 9999;
-            overflow: hidden;
-        }
-        .confetti {
-            position: absolute;
-            width: 8px; height: 8px;
-            opacity: 0;
-            will-change: transform, opacity;
-        }
-        @keyframes fall {
-            0%   { opacity: 1; top: -10%; transform: rotateX(0deg) rotateY(0deg) translateX(0); }
-            100% { opacity: 1; top: 110%; transform: rotateX(360deg) rotateY(360deg) translateX(var(--dx, 0px)); }
-        }
+/* ── Screens ── */
+.screen{width:100%;max-width:480px;display:none;flex-direction:column;align-items:center;gap:0; outline: none;}
+.screen.active{display:flex;animation:slideUp .3s cubic-bezier(.2,.9,.3,1) both}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-        .oculto { display: none !important; }
+/* ── Header ── */
+.site-header{text-align:center;padding:24px 0 20px;width:100%;max-width:480px}
+.bottle-icon{
+  width:60px;height:60px;margin:0 auto 14px;
+  background:linear-gradient(135deg,var(--c),var(--c3));
+  border-radius:18px;display:flex;align-items:center;justify-content:center;
+  font-size:30px;
+  box-shadow:0 8px 24px rgba(255,45,107,.3),inset 0 1px 0 rgba(255,255,255,.15);
+  animation:floatIcon 4s ease-in-out infinite;
+}
+@keyframes floatIcon{
+  0%,100%{transform:translateY(0) rotate(-3deg)}
+  50%{transform:translateY(-6px) rotate(3deg)}
+}
+.site-header h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.5rem,5vw,2.1rem);
+  font-weight:800;letter-spacing:-.5px;line-height:1;
+  background:linear-gradient(120deg,var(--c2) 0%,#fff 40%,var(--c) 80%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-size:200% auto;animation:shimmer 5s linear infinite;
+}
+@keyframes shimmer{0%{background-position:0% center}100%{background-position:200% center}}
+.site-header .sub{font-size:.68rem;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--mu);margin-top:5px}
+.badge-18{
+  display:inline-flex;align-items:center;gap:5px;margin-top:12px;
+  padding:5px 14px;border-radius:100px;
+  border:1px solid rgba(255,77,77,.3);background:rgba(255,77,77,.08);
+  color:#ff6b6b;font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+}
 
-        /* ── Header ───────────────────────────────────────────── */
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-            z-index: 10;
-            transition: opacity 0.4s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .imagem-destaque {
-            width: 140px; height: 140px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            border: 3px solid var(--cor-desafio);
-            box-shadow: 0 0 25px rgba(255, 0, 127, 0.6), inset 0 0 15px rgba(0, 0, 0, 0.8);
-            animation: flutuarImagem 4s ease-in-out infinite;
-            transform: translateZ(0);
-        }
-        @keyframes flutuarImagem {
-            0%, 100% { transform: translateY(0) rotate(-3deg); }
-            50%       { transform: translateY(-12px) rotate(3deg); }
-        }
-        .super-titulo {
-            font-size: 1.4rem;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            margin-bottom: -5px;
-            text-shadow: 0 0 10px var(--cor-verdade), 0 0 20px var(--cor-roxo);
-            font-weight: 800;
-        }
-        h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, var(--cor-verdade), #e0aaff, var(--cor-desafio));
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-style: italic;
-            animation: brilhoTexto 4s linear infinite;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-            line-height: 1.1;
-        }
-        @keyframes brilhoTexto {
-            0%   { background-position: 0% center; }
-            100% { background-position: 200% center; }
-        }
-        .tagline { font-size: 1rem; color: #d1d1e0; letter-spacing: 3px; text-transform: uppercase; margin-top: 5px; }
-        .aviso-idade {
-            display: inline-block;
-            color: #ff4d4d;
-            font-size: 0.75rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 15px;
-            padding: 6px 18px;
-            border: 1px solid rgba(255, 77, 77, 0.4);
-            border-radius: 50px;
-            background: rgba(255, 77, 77, 0.15);
-            box-shadow: 0 0 10px rgba(255, 77, 77, 0.2);
-            animation: piscarAviso 3s infinite;
-        }
-        @keyframes piscarAviso {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.6; }
-        }
+/* ── Card ── */
+.card{
+  width:100%;background:var(--sf);border:1px solid var(--bd);
+  border-radius:18px;padding:18px;
+  margin-bottom:10px;
+}
+.card-title{
+  font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:var(--mu);
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.card-title .dot{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
 
-        /* ── Layout Mestre ─────────────────────────────────────── */
-        .layout-mestre {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-            width: 100%;
-            max-width: 1200px;
-            padding: 0 20px;
-            z-index: 10;
-        }
-        .painel-lateral {
-            width: 100%;
-            max-width: 450px;
-            background: var(--vidro);
-            border: 1px solid var(--borda);
-            border-radius: 25px;
-            padding: 30px;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            color: rgba(255,255,255,0.85);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-        .area-jogo-wrapper { width: 100%; display: flex; justify-content: center; }
-        .painel-lateral h3 { font-size: 1.3rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;}
-        .painel-esquerdo h3 { color: var(--cor-verdade); text-shadow: 0 0 8px rgba(0,212,255,0.4); }
-        .painel-direito  h3 { color: var(--cor-desafio); text-shadow: 0 0 8px rgba(255,0,127,0.4); }
-        .lista-instrucoes { list-style: none; padding: 0; }
-        .lista-instrucoes li { margin-bottom: 12px; }
-        .lista-instrucoes b { color: #fff; }
+/* ── Inputs ── */
+.input-row{display:flex;gap:8px;margin-bottom:8px}
+input[type=text],input[type=number],select{
+  flex:1;background:var(--sf2);border:1px solid var(--bd);border-radius:12px;
+  padding:12px 14px;color:var(--tx);
+  font-family:'DM Sans',sans-serif;font-size:16px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;appearance:none;
+}
+input[type=text]::placeholder{color:var(--mu)}
+input[type=text]:focus,input[type=number]:focus,select:focus{
+  border-color:rgba(0,229,255,.5);box-shadow:0 0 0 3px rgba(0,229,255,.1);
+}
 
-        /* ── Placar ─────────────────────────────────────────────── */
-        #placar {
-            position: fixed;
-            top: 20px; right: 20px;
-            z-index: 1000;
-            width: 180px;
-            padding: 15px;
-            border-radius: 20px;
-            border: 1px solid var(--borda);
-            background: var(--vidro);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            transition: all 0.3s ease;
-        }
-        .placar-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 4px;
-        }
-        .placar-item b { color: var(--cor-verdade); }
-        #btn-recomecar {
-            width: 100%;
-            margin-top: 10px;
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid rgba(255,0,0,0.3);
-            border-radius: 8px;
-            padding: 5px;
-            color: #ff4d4d;
-            font-size: 0.65rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            font-family: inherit;
-        }
-        #btn-recomecar:hover { background: rgba(255,0,0,0.3); color: #fff; }
+/* ── Player Chips ── */
+#players-list{display:flex;flex-wrap:wrap;gap:6px;min-height:20px;margin-top:4px}
+.player-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 10px 5px 12px;
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);
+  border-radius:100px;font-size:.8rem;font-weight:500;color:var(--c2);
+}
+.chip-del{
+  background:none;border:none;cursor:pointer;
+  color:rgba(0,229,255,.5);font-size:15px;line-height:1;
+  padding:2px 0 0;min-height:0;transition:color .15s;
+}
+.chip-del:active{color:#ff6b6b}
 
-        /* ── Responsividade e Placar Mobile ─────────────────────── */
-        @media (max-width: 1023px) {
-            .area-jogo-wrapper { order: 1; }
-            .painel-esquerdo   { order: 2; }
-            .painel-direito    { order: 3; }
-        }
+/* ── Level Selector ── */
+.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.lvl-btn{
+  background:var(--sf);border:1px solid var(--bd);border-radius:12px;
+  padding:12px 8px;color:var(--mu);
+  font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;
+  cursor:pointer;text-align:center;
+  transition:all .18s;touch-action:manipulation;
+  min-height:54px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+}
+.lvl-btn .lvl-icon{font-size:20px}
+.lvl-btn.active{
+  background:rgba(0,229,255,.1);border-color:var(--c2);color:var(--c2);
+  box-shadow:0 0 16px rgba(0,229,255,.15),inset 0 1px 0 rgba(0,229,255,.1);
+}
+.lvl-btn:active{transform:scale(.95)}
 
-        @media (max-width: 768px) {
-            #placar {
-                top: auto;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                border-radius: 20px 20px 0 0;
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: space-between;
-                /* FIX: respeita notch/home bar do iPhone */
-                padding: 10px 15px calc(10px + var(--safe-bottom));
-                box-shadow: 0 -5px 25px rgba(0,0,0,0.6);
-            }
-            #lista-pontos {
-                display: flex;
-                gap: 10px;
-                overflow-x: auto;
-                width: 100%;
-                justify-content: center;
-                margin-bottom: 8px;
-            }
-            #lista-pontos::-webkit-scrollbar { height: 0px; }
-            .placar-item {
-                margin-bottom: 0;
-                border: none;
-                padding: 4px 10px;
-                background: rgba(0,0,0,0.5);
-                border-radius: 12px;
-                gap: 8px;
-                white-space: nowrap;
-            }
-            #btn-recomecar { margin-top: 0; width: 100%; padding: 8px; }
-            /* FIX: padding extra para não esconder conteúdo atrás do placar + safe area */
-            body { padding-bottom: calc(100px + var(--safe-bottom)); }
-        }
+/* ── Secret Card ── */
+.secret-row{display:flex;gap:8px;margin-bottom:8px}
+.secret-row select{flex:0 0 108px;font-size:14px}
 
-        @media (min-width: 1024px) {
-            .layout-mestre { flex-direction: row; align-items: flex-start; justify-content: center; }
-            .painel-lateral { width: 280px; position: sticky; top: 40px; }
-            .area-jogo-wrapper { flex: 1; max-width: 450px; }
-        }
+/* ── Meta Input ── */
+.meta-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.meta-row label{font-size:.84rem;color:var(--mu)}
+.meta-row input[type=number]{
+  flex:0 0 80px;text-align:center;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;
+}
 
-        /* ── Container do Jogo ─────────────────────────────────── */
-        .container {
-            width: 100%;
-            padding: 35px 20px;
-            border-radius: 30px;
-            border: 1px solid var(--borda);
-            background: var(--vidro);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
-        }
+/* ── Buttons ── */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  border:none;border-radius:14px;padding:14px 20px;
+  font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+  cursor:pointer;touch-action:manipulation;min-height:48px;
+  transition:transform .1s ease,box-shadow .2s ease,opacity .2s;
+  user-select:none;-webkit-user-select:none;
+  position:relative;overflow:hidden;
+}
+.btn:active{transform:scale(.96)}
+.btn:disabled{opacity:.35;pointer-events:none}
 
-        /* ── Inputs e Selects ──────────────────────────────────── */
-        input, select {
-            width: 90%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0, 0, 0, 0.4);
-            color: #fff;
-            font-family: inherit;
-            outline: none;
-            transition: 0.3s;
-            /* FIX: tamanho 16px evita zoom automático no iOS ao focar */
-            font-size: 16px;
-        }
-        input:focus, select:focus { border-color: var(--cor-verdade); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
-        /* Mantém o select visível no iOS/Android */
-        select { appearance: auto; -webkit-appearance: auto; }
+.btn-primary{
+  background:linear-gradient(135deg,var(--c),#c2185b);color:#fff;
+  box-shadow:0 4px 20px rgba(255,45,107,.3);
+  width:100%;font-size:.92rem;padding:15px;border-radius:16px;
+}
+.btn-primary:active{box-shadow:0 2px 10px rgba(255,45,107,.2)}
 
-        /* ── Botões ─────────────────────────────────────────────── */
-        .btn {
-            padding: 15px 20px;
-            margin: 8px 4px;
-            border: none;
-            border-radius: 15px;
-            font-weight: 800;
-            font-family: inherit;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.3s ease, opacity 0.2s ease;
-            /* FIX: mínimo 44px touch target recomendado pela Apple/Google */
-            min-height: 44px;
-            touch-action: manipulation;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        .btn:active  { transform: scale(0.96); }
-        /* FIX: estado desabilitado visual durante bloqueio de animação */
-        .btn:disabled { opacity: 0.5; pointer-events: none; }
+.btn-sm{padding:11px 16px;font-size:.72rem;border-radius:12px;min-height:44px}
 
-        .btn-verdade { background: var(--cor-verdade); color: #000; box-shadow: 0 0 12px rgba(0, 212, 255, 0.3); }
-        .btn-desafio { background: var(--cor-desafio); color: #fff; box-shadow: 0 0 12px rgba(255, 0, 127, 0.3); }
-        .btn-sim     { background: #00ff88; color: #000; box-shadow: 0 0 12px rgba(0,255,136,0.3); }
-        .btn-nao     { background: #ff4d4d; color: #fff; box-shadow: 0 0 12px rgba(255,77,77,0.3); }
+.btn-truth{
+  background:linear-gradient(135deg,rgba(0,229,255,.15),rgba(0,229,255,.05));
+  border:1px solid rgba(0,229,255,.35);color:var(--c2);
+  box-shadow:0 0 16px rgba(0,229,255,.08);flex:1;
+}
+.btn-dare{
+  background:linear-gradient(135deg,rgba(255,45,107,.15),rgba(255,45,107,.05));
+  border:1px solid rgba(255,45,107,.35);color:var(--c);
+  box-shadow:0 0 16px rgba(255,45,107,.08);flex:1;
+}
+.btn-yes{
+  background:linear-gradient(135deg,rgba(0,255,136,.15),rgba(0,255,136,.05));
+  border:1px solid rgba(0,255,136,.35);color:#00d97e;flex:1;
+}
+.btn-no{
+  background:linear-gradient(135deg,rgba(255,77,77,.15),rgba(255,77,77,.05));
+  border:1px solid rgba(255,77,77,.35);color:#ff6b6b;flex:1;
+}
+.btn-icon{font-size:17px}
+.btn-row{display:flex;gap:10px;width:100%;margin-top:4px}
 
-        /* ── Seletor de Nível ───────────────────────────────────── */
-        .niveis { display: flex; justify-content: center; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
-        .btn-nivel {
-            padding: 10px 14px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.3);
-            color: #ccc;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-            min-height: 44px;
-            touch-action: manipulation;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        .btn-nivel.ativo {
-            border-color: var(--cor-verdade);
-            background: rgba(0, 212, 255, 0.15);
-            color: #fff;
-            box-shadow: 0 0 10px rgba(0,212,255,0.2);
-            transform: scale(1.05);
-        }
+/* ── Scoreboard ── */
+#scoreboard{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(8,8,16,.94);
+  border-top:1px solid var(--bd);
+  padding:8px 16px calc(8px + var(--safe-b));
+  display:none;flex-direction:column;gap:6px;
+}
+#scoreboard.visible{display:flex}
+.score-row{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  justify-content: flex-start; /* Fallback universal inicial */
+  padding:2px 16px;
+}
+/* Alinhamento ao centro automático mas que permite scroll livre se crescer */
+.score-row::before, .score-row::after {
+  content: '';
+  margin: auto;
+}
+.score-row::-webkit-scrollbar{display:none}
+.score-chip{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 11px;background:var(--sf2);border-radius:100px;
+  font-size:.75rem;white-space:nowrap;border:1px solid var(--bd);
+  transition:border-color .25s,background .25s;
+}
+.score-chip.current-turn{border-color:var(--c2);background:rgba(0,229,255,.1);color:var(--c2)}
+.score-chip .pts{font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem}
+.score-chip .sname{color:var(--mu)}
+.score-chip.current-turn .sname{color:var(--c2)}
+.restart-btn{
+  background:rgba(255,77,77,.07);border:1px solid rgba(255,77,77,.2);
+  border-radius:10px;padding:6px;color:#ff6b6b;
+  font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  font-family:'Syne',sans-serif;cursor:pointer;touch-action:manipulation;
+  min-height:34px;width:100%;transition:background .2s;
+}
+.restart-btn:active{background:rgba(255,77,77,.18)}
 
-        /* ── Modo Vingança ─────────────────────────────────────── */
-        .modo-vinganca {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px 10px;
-            border-radius: 15px;
-            margin-top: 15px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .modo-vinganca p { font-size: 0.75rem; color: #aaa; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;}
-        .modo-vinganca .linha { display: flex; gap: 8px; justify-content: center; align-items: center; }
-        .modo-vinganca select { width: 35%; margin: 0; padding: 10px; font-size: 14px; }
-        .modo-vinganca input  { width: 60%; margin: 0; padding: 10px; }
+/* ── Game Screen ── */
+#screen-game{padding-bottom:calc(110px + var(--safe-b))}
 
-        /* ── Meta de Pontos ─────────────────────────────────────── */
-        .meta-wrap { margin-top: 25px; }
-        .meta-wrap label { font-size: 0.75rem; color: #aaa; text-transform: uppercase; font-weight: 600;}
-        .meta-wrap input  { width: 80px; text-align: center; font-size: 1.1rem; font-weight: bold;}
+.turn-info{text-align:center;margin:14px 0 10px;width:100%}
+.turn-label{font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--mu)}
+.turn-name{
+  font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:800;
+  color:var(--c2);text-shadow:0 0 16px rgba(0,229,255,.25);
+  transition:opacity .2s;
+}
+.turn-name.fade{opacity:0}
 
-        /* ── Card 3D ─────────────────────────────────────────────── */
-        .cena { width: 100%; height: 220px; perspective: 1000px; margin: 25px 0; }
-        .carta {
-            width: 100%; height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
-            will-change: transform;
-        }
-        .carta:not(.virada):hover {
-            transform: rotateX(5deg) rotateY(-5deg) scale(1.02);
-        }
-        .carta.virada { transform: rotateY(180deg); }
+/* ── Progress Bar ── */
+.progress-wrap{width:100%;margin-bottom:8px}
+.progress-label{display:flex;justify-content:space-between;font-size:.68rem;color:var(--mu);margin-bottom:5px}
+.progress-track{height:5px;background:var(--sf2);border-radius:100px;overflow:hidden}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--c),var(--c3));
+  border-radius:100px;
+  transition:width .45s cubic-bezier(.2,.9,.3,1);
+  min-width:4px;
+}
 
-        .carta-face {
-            position: absolute;
-            width: 100%; height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 20px;
-            padding: 20px;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        .carta-frente {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: rgba(255,255,255,0.4);
-            font-size: 4rem;
-        }
-        .carta-verso {
-            background: rgba(10, 10, 15, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transform: rotateY(180deg);
-            font-size: 1.15rem;
-            line-height: 1.4;
-            font-weight: 600;
-            /* FIX: overflow scroll suave no iOS */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            /* FIX: evita que texto muito longo quebre o layout da carta */
-            word-break: break-word;
-            hyphens: auto;
-        }
-        .carta-verso::-webkit-scrollbar { width: 4px; }
-        .carta-verso::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+/* ── 3D Card ── */
+.card-scene{
+  width:100%;height:190px;
+  perspective:800px;margin:6px 0 12px;
+}
+.card-3d{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;
+  transition:transform .5s cubic-bezier(.2,.85,.3,1);
+  will-change:transform;
+}
+.card-3d.flipped{transform:rotateY(180deg)}
+.card-face{
+  position:absolute;inset:0;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  padding:18px;border:1px solid var(--bd);
+}
+.card-front{
+  background:rgba(255,255,255,.03);
+  flex-direction:column;gap:10px;
+}
+.card-front-icon{font-size:2.8rem;opacity:.5}
+.card-front-hint{font-size:.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--mu)}
+.card-back{
+  transform:rotateY(180deg);
+  font-size:1.05rem;font-weight:500;line-height:1.5;text-align:center;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  word-break:break-word;hyphens:auto;
+}
+.card-back::-webkit-scrollbar{width:3px}
+.card-back::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
 
-        .carta.tema-v .carta-verso {
-            border-color: var(--cor-verdade);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2), inset 0 0 15px rgba(0, 212, 255, 0.1);
-            color: #e6faff;
-        }
-        .carta.tema-d .carta-verso {
-            border-color: var(--cor-desafio);
-            box-shadow: 0 0 20px rgba(255, 0, 127, 0.2), inset 0 0 15px rgba(255, 0, 127, 0.1);
-            color: #ffe6f0;
-        }
+.card-3d.theme-truth .card-back{
+  background:rgba(0,6,12,.97);
+  border-color:rgba(0,229,255,.4);
+  box-shadow:0 0 32px rgba(0,229,255,.12),inset 0 0 24px rgba(0,229,255,.04);
+  color:#e0faff;
+}
+.card-3d.theme-dare .card-back{
+  background:rgba(12,0,5,.97);
+  border-color:rgba(255,45,107,.4);
+  box-shadow:0 0 32px rgba(255,45,107,.12),inset 0 0 24px rgba(255,45,107,.04);
+  color:#ffe8ef;
+}
+.card-type-badge{
+  position:absolute;top:11px;right:13px;
+  font-family:'Syne',sans-serif;font-size:.58rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  padding:3px 8px;border-radius:100px;pointer-events:none;
+}
+.theme-truth .card-type-badge{background:rgba(0,229,255,.15);color:var(--c2);border:1px solid rgba(0,229,255,.3)}
+.theme-dare  .card-type-badge{background:rgba(255,45,107,.15);color:var(--c);border:1px solid rgba(255,45,107,.3)}
 
-        /* ── Tela Final ─────────────────────────────────────────── */
-        #tela-final h2 {
-            color: var(--cor-desafio);
-            text-shadow: 0 0 10px rgba(255,0,127,0.4);
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        .castigo-box {
-            border: 2px dashed var(--cor-desafio);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 25px 0;
-            background: rgba(255, 0, 127, 0.05);
-        }
-        .castigo-box p:first-child { color: var(--cor-desafio); font-size: 0.85rem; font-weight: 800; letter-spacing: 1px;}
-        .castigo-box .castigo-texto { color: #fff; font-style: italic; font-size: 1.1rem; margin-top: 10px;}
+/* ── Pontos Flash ── */
+.pts-flash{
+  position:fixed;top:40%;left:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;
+  pointer-events:none;z-index:500;opacity:0;
+  text-shadow:0 0 24px currentColor;
+}
+@keyframes ptsAnim{
+  0%  {opacity:0;transform:translate(-50%,-40%) scale(.5)}
+  30% {opacity:1;transform:translate(-50%,-60%) scale(1.1)}
+  70% {opacity:1;transform:translate(-50%,-65%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-80%) scale(.9)}
+}
 
-        /* ── Footer ─────────────────────────────────────────────── */
-        footer { margin-top: 40px; margin-bottom: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.4); z-index: 10; text-align: center;}
-        footer strong { color: var(--cor-verdade); letter-spacing: 1px;}
-    </style>
+/* ── Final Screen ── */
+.winner-crown{
+  font-size:3.8rem;text-align:center;margin:10px 0;
+  filter:drop-shadow(0 0 16px rgba(245,158,11,.4));
+  animation:crownBounce 1.5s ease-in-out infinite;
+}
+@keyframes crownBounce{
+  0%,100%{transform:translateY(0) rotate(-3deg)}
+  50%{transform:translateY(-7px) rotate(3deg)}
+}
+.winner-name{
+  font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;text-align:center;
+  background:linear-gradient(120deg,var(--gold),#fff,var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-size:200% auto;animation:shimmer 3s linear infinite;margin-bottom:4px;
+}
+.winner-score{text-align:center;font-size:.76rem;color:var(--mu);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.punishment-box{
+  background:rgba(255,45,107,.06);border:1px dashed rgba(255,45,107,.28);
+  border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;
+}
+.punishment-label{font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--c);font-weight:700;margin-bottom:8px}
+.punishment-text{font-size:.95rem;font-style:italic;color:var(--tx);line-height:1.5}
+
+/* ── Leaderboard ── */
+.leaderboard{width:100%;display:flex;flex-direction:column;gap:7px;margin:10px 0}
+.lb-row{
+  display:flex;align-items:center;gap:11px;padding:9px 13px;
+  background:var(--sf);border:1px solid var(--bd);border-radius:12px;
+  animation:slideUp .3s both;
+}
+.lb-row:nth-child(1){animation-delay:.05s}
+.lb-row:nth-child(2){animation-delay:.1s}
+.lb-row:nth-child(3){animation-delay:.15s}
+.lb-row:nth-child(4){animation-delay:.2s}
+.lb-row:nth-child(5){animation-delay:.25s}
+.lb-rank{font-family:'Syne',sans-serif;font-weight:800;font-size:.82rem;width:22px;text-align:center;flex-shrink:0}
+.lb-name{flex:1;font-size:.88rem}
+.lb-pts{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem}
+.lb-row:first-child{background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.22)}
+.lb-row:first-child .lb-rank,.lb-row:first-child .lb-pts{color:var(--gold)}
+
+/* ── How To Play ── */
+.howto{width:100%;border-radius:16px;border:1px solid var(--bd);overflow:hidden;margin-bottom:10px}
+.howto-header{
+  width:100%;background:var(--sf);border:none;padding:13px 17px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;color:var(--mu);
+  font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;touch-action:manipulation;min-height:46px;
+}
+.howto-header .arrow{transition:transform .2s}
+.howto-header.open .arrow{transform:rotate(180deg)}
+.howto-body{display:none;padding:0 17px 15px;background:var(--sf);border-top:1px solid var(--bd)}
+.howto-body.open{display:block}
+.howto-body ol{list-style:none;counter-reset:steps;display:flex;flex-direction:column;gap:9px;padding-top:13px}
+.howto-body li{
+  counter-increment:steps;display:flex;gap:10px;
+  font-size:.8rem;color:var(--mu);line-height:1.5;
+}
+.howto-body li::before{
+  content:counter(steps);min-width:20px;height:20px;
+  background:var(--c);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.62rem;
+  color:#fff;flex-shrink:0;margin-top:1px;
+}
+.howto-body li b{color:var(--tx);font-weight:500}
+
+/* ── Support ── */
+.support-box{background:rgba(0,0,0,.35);border-radius:11px;border:1px solid var(--bd);overflow:hidden;margin-top:10px}
+.support-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 13px;font-size:.78rem;border-bottom:1px solid var(--bd);
+}
+.support-row:last-child{border-bottom:none}
+.brand{font-weight:700;font-size:.73rem}
+.num{color:var(--mu);font-family:monospace;font-size:.76rem}
+.brand-mpesa{color:#ed1c24}
+.brand-emola{color:#f15a24}
+
+/* ── Toast ── */
+.toast{
+  position:fixed;top:max(18px,var(--safe-t));left:50%;
+  transform:translateX(-50%) translateY(-16px);
+  background:rgba(25,25,35,.96);border:1px solid var(--bd2);border-radius:100px;
+  padding:9px 18px;font-size:.78rem;font-weight:500;color:var(--tx);
+  z-index:9998;opacity:0;transition:all .28s;
+  white-space:nowrap;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Util ── */
+.hidden{display:none!important}
+.txt-center{text-align:center}
+.mt8{margin-top:8px}
+.mt16{margin-top:16px}
+footer{width:100%;max-width:480px;text-align:center;padding:18px 0 6px;font-size:.68rem;color:rgba(240,240,248,.22);letter-spacing:1px}
+footer strong{color:rgba(240,240,248,.45)}
+
+@media(min-width:600px){
+  #app{padding-top:36px}
+  .site-header h1{font-size:2.4rem}
+}
+</style>
 </head>
 <body>
 
-    <div class="bg-animado">
-        <div class="orbita orbita-1"></div>
-        <div class="orbita orbita-2"></div>
-        <div class="orbita orbita-3"></div>
+<div id="confetti-wrap" aria-hidden="true"></div>
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+<div id="app">
+
+  <header class="site-header">
+    <div class="bottle-icon" aria-hidden="true">🍾</div>
+    <h1>Gira Garrafa</h1>
+    <p class="sub">Verdade ou Consequência</p>
+    <div class="badge-18" aria-label="Conteúdo para maiores de 18 anos">⚠ Explícito · +18</div>
+  </header>
+
+  <div id="screen-setup" class="screen active" role="main">
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Jogadores</div>
+      <div class="input-row">
+        <input type="text" id="inp-name" placeholder="Nome do jogador…" maxlength="20"
+               autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false"
+               aria-label="Nome do jogador">
+        <button class="btn btn-sm btn-truth" id="btn-add" aria-label="Adicionar jogador">+</button>
+      </div>
+      <div id="players-list" role="list" aria-label="Jogadores adicionados"></div>
     </div>
 
-    <div id="confetti-container"></div>
-
-    <div id="placar" class="oculto fade-in">
-        <div id="lista-pontos"></div>
-        <button id="btn-recomecar">RECOMEÇAR TUDO</button>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--c3);box-shadow:0 0 8px var(--c3)"></span>Intensidade</div>
+      <div class="level-grid" role="radiogroup" aria-label="Nível de intensidade">
+        <button class="lvl-btn" data-lvl="1" role="radio" aria-checked="false">
+          <span class="lvl-icon">🧊</span>Leve
+        </button>
+        <button class="lvl-btn active" data-lvl="2" role="radio" aria-checked="true">
+          <span class="lvl-icon">🔥</span>Quente
+        </button>
+        <button class="lvl-btn" data-lvl="3" role="radio" aria-checked="false">
+          <span class="lvl-icon">🧨</span>Caos
+        </button>
+      </div>
     </div>
 
-    <header id="cabecalho" class="fade-in">
-        <img src="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=400&q=80" alt="Gira Garrafa Party" class="imagem-destaque">
-        <h2 class="super-titulo">Gira Garrafa</h2>
-        <h1>verdade ou consequência</h1>
-        <p class="tagline">Onde tudo começa e termina</p>
-        <div class="aviso-idade">⚠️ Explícito • +18 anos</div>
-    </header>
-
-    <div class="layout-mestre">
-
-        <aside id="painel-esquerdo" class="painel-lateral painel-esquerdo fade-in">
-            <h3>💡 Sobre o Jogo</h3>
-            <p>Desenvolvido por <strong>Benj Carhl</strong>.</p>
-            <p style="margin-top: 15px;">Criado com o objetivo de tornar qualquer momento entre amigos ou casais em algo verdadeiramente divertido e memorável.</p>
-            <p style="margin-top: 10px;">É um convite para devolver o espírito mágico da interação e partilhar pura alegria com quem mais amamos.</p>
-
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.2);">
-                <h4 style="color: #fff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">☕ Apoiar o Desenvolvedor</h4>
-                <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 12px;">Se o jogo rendeu boas risadas, considera apoiar o criador!</p>
-                <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
-                        <span style="color: #ed1c24; font-weight: 800;">M-Pesa:</span> <span>+258 85 072 7507</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: #f15a24; font-weight: 800;">E-Mola:</span> <span>+258 86 346 0282</span>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <main class="area-jogo-wrapper">
-
-            <div id="tela-setup" class="container fade-in">
-                <input type="text" id="campo-nome" placeholder="Nome do jogador..." maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false">
-                <button class="btn btn-verdade" id="btn-adicionar" style="width:90%; margin-top:5px;">
-                    Adicionar Jogador
-                </button>
-
-                <div id="lista-nomes" style="font-size:0.85rem; color:#b3b3b3; margin:20px 0; font-weight:600; min-height: 22px;"></div>
-
-                <div class="niveis" id="niveis"></div>
-
-                <div class="modo-vinganca">
-                    <p>Modo Vingança (Cartas Secretas):</p>
-                    <div class="linha">
-                        <select id="tipo-carta-custom">
-                            <option value="v">Verdade</option>
-                            <option value="d">Desafio</option>
-                        </select>
-                        <input type="text" id="campo-carta-custom" placeholder="Escreve aqui..." maxlength="150" autocomplete="off">
-                    </div>
-                    <button class="btn btn-verdade" id="btn-guardar-carta" style="font-size:0.75rem; width:100%; margin-top:12px;">
-                        Guardar Carta Secreta
-                    </button>
-                </div>
-
-                <div class="meta-wrap">
-                    <label for="campo-meta">Meta de Pontos (Min: 10 | Max: 60):</label><br>
-                    <input type="number" id="campo-meta" value="30" min="10" max="60" inputmode="numeric">
-                </div>
-
-                <button class="btn btn-desafio" id="btn-iniciar" style="width:100%; margin-top:25px;">
-                    Iniciar a diversão
-                </button>
-            </div>
-
-            <div id="tela-jogo" class="container oculto fade-in">
-                <div id="info-vez" style="font-size:0.85rem; color:#aaa; text-transform:uppercase; font-weight:600; letter-spacing: 1px;">
-                    Vez de <span id="nome-vez" style="color:var(--cor-verdade); font-size:1.1rem;"></span>
-                </div>
-
-                <div class="cena">
-                    <div class="carta" id="carta-principal">
-                        <div class="carta-face carta-frente">?</div>
-                        <div class="carta-face carta-verso" id="texto-carta"></div>
-                    </div>
-                </div>
-
-                <div id="controles-sorteio">
-                    <button class="btn btn-verdade" id="btn-verdade" style="width: 45%;">Verdade</button>
-                    <button class="btn btn-desafio" id="btn-desafio" style="width: 45%;">Desafio</button>
-                </div>
-
-                <div id="controles-validacao" class="oculto">
-                    <p style="font-size:0.9rem; color:#ccc; margin-bottom: 10px; font-weight: 600;">Cumpriu a missão?</p>
-                    <button class="btn btn-sim" id="btn-sim" style="width: 40%;">SIM</button>
-                    <button class="btn btn-nao" id="btn-nao" style="width: 40%;">NÃO</button>
-                </div>
-            </div>
-
-            <div id="tela-final" class="container oculto fade-in">
-                <h2>FIM DA JORNADA</h2>
-                <p id="nome-vencedor" style="font-size:1.8rem; font-weight:800; color:var(--cor-verdade);"></p>
-
-                <div class="castigo-box">
-                    <p>CASTIGO FINAL PARA <span id="nome-perdedor" style="color:#fff;"></span>:</p>
-                    <p id="texto-castigo" class="castigo-texto"></p>
-                </div>
-
-                <button class="btn btn-verdade" id="btn-nova-partida" style="width: 100%;">Nova Partida</button>
-            </div>
-
-        </main>
-
-        <aside id="painel-direito" class="painel-lateral painel-direito fade-in">
-            <h3>📖 Como Jogar</h3>
-            <ul class="lista-instrucoes">
-                <li><b>1.</b> Adiciona os nomes da malta para entrar na roda.</li>
-                <li><b>2.</b> Escolhe a intensidade: Leve (🧊), Quente (🔥) ou Caos (🧨).</li>
-                <li><b>3.</b> O Modo Vingança permite criar cartas secretas para os teus amigos!</li>
-                <li><b>4.</b> Cumpre a missão e ganha pontos (+2 Verdade, +4 Desafio). Se recusares, perdes pontos.</li>
-                <li><b>5.</b> Quem atingir a meta vence e dita o castigo final!</li>
-            </ul>
-        </aside>
-
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--c);box-shadow:0 0 8px var(--c)"></span>Modo Vingança</div>
+      <p style="font-size:.76rem;color:var(--mu);margin-bottom:11px;">Cria cartas secretas para os teus amigos!</p>
+      <div class="secret-row">
+        <select id="sel-card-type" aria-label="Tipo de carta">
+          <option value="v">Verdade</option>
+          <option value="d">Desafio</option>
+        </select>
+        <input type="text" id="inp-secret" placeholder="Escreve a carta…" maxlength="150" autocomplete="off">
+      </div>
+      <button class="btn btn-sm btn-dare" id="btn-save-secret" style="width:100%">Guardar Carta Secreta</button>
+      <div id="secret-count" style="font-size:.7rem;color:var(--mu);text-align:center;margin-top:7px;min-height:15px;"></div>
     </div>
 
-    <footer>&copy; 2026 Desenvolvido por <strong>Benj Carhl</strong></footer>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--gold);box-shadow:0 0 8px var(--gold)"></span>Meta de Pontos</div>
+      <div class="meta-row">
+        <label for="inp-meta">Quem chegar primeiro vence</label>
+        <input type="number" id="inp-meta" value="30" min="10" max="60" inputmode="numeric" aria-label="Meta de pontos">
+      </div>
+      <p style="font-size:.7rem;color:var(--mu);margin-top:7px;">Verdade +2pts · Desafio +4pts · Recusa −pontos</p>
+    </div>
 
-    <script>
-    /* ================================================================
-       SEGURANÇA (Anti-XSS)
-    ================================================================ */
-    function sanitizarTexto(str) {
-        const temp = document.createElement('div');
-        temp.textContent = str;
-        return temp.innerHTML;
+    <div class="howto">
+      <button class="howto-header" id="howto-toggle" aria-expanded="false" aria-controls="howto-body">
+        Como Jogar
+        <span class="arrow" aria-hidden="true">▾</span>
+      </button>
+      <div class="howto-body" id="howto-body" role="region">
+        <ol>
+          <li><b>Adiciona jogadores</b> e escolhe a intensidade da sessão.</li>
+          <li><b>Modo Vingança:</b> cria cartas personalizadas para os teus amigos.</li>
+          <li>Em cada turno escolhe <b>Verdade</b> (+2 pts) ou <b>Desafio</b> (+4 pts).</li>
+          <li>Cumpriu? Clica <b>SIM</b> e ganha pontos. Recusou? Perde os mesmos pontos.</li>
+          <li>Quem atingir a meta <b>vence</b> e dita o castigo final ao último colocado!</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card" style="padding-bottom:14px">
+      <div class="card-title"><span class="dot" style="background:var(--gold);box-shadow:0 0 8px var(--gold)"></span>Apoiar o Desenvolvedor</div>
+      <p style="font-size:.76rem;color:var(--mu);margin-bottom:9px;">Se o jogo rendeu boas risadas, considera apoiar!</p>
+      <div class="support-box">
+        <div class="support-row"><span class="brand brand-mpesa">M-Pesa</span><span class="num">+258 85 072 7507</span></div>
+        <div class="support-row"><span class="brand brand-emola">E-Mola</span><span class="num">+258 86 346 0282</span></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-start" style="margin-top:4px">Iniciar a Diversão 🎉</button>
+    <footer>© 2026 <strong>Benj Carhl</strong> · Gira Garrafa</footer>
+  </div>
+
+  <div id="screen-game" class="screen" role="main">
+
+    <div class="turn-info">
+      <p class="turn-label">Vez de</p>
+      <p class="turn-name" id="turn-name" aria-live="polite"></p>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="prog-name"></span>
+        <span id="prog-pts"></span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+
+    <div class="card-scene" role="img" aria-label="Carta do jogo">
+      <div class="card-3d" id="card-3d">
+        <div class="card-face card-front" aria-hidden="true">
+          <div class="card-front-icon">🃏</div>
+          <div class="card-front-hint">Escolhe o teu destino</div>
+        </div>
+        <div class="card-face card-back" id="card-text" aria-live="assertive"></div>
+      </div>
+    </div>
+
+    <div id="ctrls-choose" class="btn-row">
+      <button class="btn btn-truth" id="btn-truth"><span class="btn-icon">💬</span> Verdade</button>
+      <button class="btn btn-dare"  id="btn-dare"><span class="btn-icon">🎯</span> Desafio</button>
+    </div>
+
+    <div id="ctrls-validate" class="btn-row hidden">
+      <button class="btn btn-yes" id="btn-yes"><span class="btn-icon">✅</span> Cumpriu</button>
+      <button class="btn btn-no"  id="btn-no"><span class="btn-icon">❌</span> Recusou</button>
+    </div>
+
+    <p id="validate-hint" class="hidden txt-center mt8" style="font-size:.73rem;color:var(--mu)">Cumpriu a missão?</p>
+  </div>
+
+  <div id="screen-final" class="screen" role="main">
+    <div class="winner-crown" aria-hidden="true">👑</div>
+    <p class="winner-name" id="final-winner"></p>
+    <p class="winner-score" id="final-winner-score"></p>
+    <div class="punishment-box" id="punishment-box">
+      <div class="punishment-label">Castigo Final para <span id="final-loser"></span>:</div>
+      <p class="punishment-text" id="final-punishment"></p>
+    </div>
+    <div class="leaderboard" id="leaderboard" role="list" aria-label="Classificação final"></div>
+    <button class="btn btn-primary" id="btn-new-game" style="margin-top:8px">Nova Partida 🔄</button>
+    <footer>© 2026 <strong>Benj Carhl</strong> · Gira Garrafa</footer>
+  </div>
+</div>
+
+<div id="scoreboard" role="complementary" aria-label="Pontuação">
+  <div class="score-row" id="score-row"></div>
+  <button class="restart-btn" id="btn-restart">⟳ Recomeçar</button>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   UTILS
+════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+const sanitize = s => s.replace(/[<>&"']/g, c =>
+  ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c] || c));
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const rnd   = arr => arr[Math.floor(Math.random() * arr.length)];
+
+/* Debounce por botão — evita duplo-toque sem bloquear outros botões */
+const _dbt = {};
+function dbt(key, ms = 550) {
+  const now = Date.now();
+  if (now - (_dbt[key] || 0) < ms) return false;
+  _dbt[key] = now;
+  return true;
+}
+
+/* ════════════════════════════════════════════
+   AUDIO — Inicialização segura (iOS/Android)
+════════════════════════════════════════════ */
+let _ctx = null;
+let audioUnlocked = false;
+
+function getCtx() {
+  if (!_ctx) {
+    try { _ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch{}
+  }
+  return _ctx;
+}
+
+// Desbloqueia o áudio na primeira interação real
+function unlockAudio() {
+  if (audioUnlocked) return;
+  const ctx = getCtx();
+  if (ctx && ctx.state === 'suspended') {
+    ctx.resume().then(() => { audioUnlocked = true; }).catch(()=>{});
+  } else if (ctx && ctx.state === 'running') {
+    audioUnlocked = true;
+  }
+  
+  // Opcional: tocar um som inaudível só para garantir o desbloqueio no iOS
+  if(ctx && audioUnlocked){
+    const osc = ctx.createOscillator();
+    osc.frequency.value = 400;
+    const gain = ctx.createGain();
+    gain.gain.value = 0; // mudo
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(0);
+    osc.stop(0.1);
+  }
+}
+
+function beep(freq, dur, type = 'sine', vol = 0.22) {
+  if (!audioUnlocked) return; // Não tenta tocar se não estiver desbloqueado
+  try {
+    const ctx = getCtx(); if (!ctx) return;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + dur);
+  } catch{}
+}
+function chime()    { beep(880,.28); setTimeout(()=>beep(1108,.2),140); setTimeout(()=>beep(1318,.32),270); }
+function negBeep()  { beep(180,.28,'sawtooth'); }
+function tick()     { beep(600,.06); }
+function flipBeep(truth) { beep(truth ? 440 : 320, .22); }
+
+/* ════════════════════════════════════════════
+   CONFETTI — Sistema de Pool (Zero DOM Thrashing)
+════════════════════════════════════════════ */
+let _confPieces = [];
+
+// Pré-criar os elementos (Chamar esta função no window.onload)
+function initConfetti() {
+  const wrap = $('confetti-wrap');
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.className = 'c-piece';
+    _confPieces.push(el);
+    frag.appendChild(el);
+  }
+  wrap.appendChild(frag);
+}
+
+function launchConfetti() {
+  const colors = ['#ff2d6b','#00e5ff','#a855f7','#00ff88','#f59e0b','#fff'];
+
+  _confPieces.forEach(el => {
+    // Fazer reset à animação forçando um reflow
+    el.style.animation = 'none';
+    void el.offsetWidth;
+
+    const size = 6 + Math.random() * 7;
+    const delay = Math.random() * 0.8;
+    const dur   = 2 + Math.random() * 2.2;
+
+    el.style.cssText =
+      `left:${Math.random()*100}vw;top:-6%;` +
+      `width:${size}px;height:${size}px;` +
+      `background:${rnd(colors)};` +
+      `border-radius:${Math.random()>.5?'50%':'3px'};` +
+      `--xt:${(Math.random()-.5)*90}px;` +
+      `animation:confFall ${dur}s linear ${delay}s forwards;`;
+  });
+}
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+let _toastTimer = null;
+function showToast(msg, dur = 2200) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+/* ════════════════════════════════════════════
+   POINTS FLASH
+════════════════════════════════════════════ */
+function flashPoints(val) {
+  const el = document.createElement('div');
+  el.className = 'pts-flash';
+  el.textContent = val > 0 ? '+' + val : String(val);
+  el.style.color = val > 0 ? '#00ff88' : '#ff6b6b';
+  document.body.appendChild(el);
+  // forçar reflow
+  void el.offsetWidth;
+  el.style.animation = 'ptsAnim 1.05s cubic-bezier(.2,.9,.3,1) forwards';
+  setTimeout(() => el.remove(), 1150);
+}
+
+/* ════════════════════════════════════════════
+   GAME DATA
+════════════════════════════════════════════ */
+const STORE_KEY = 'giraGarrafa_v5';
+
+const Q = {
+  v1: [
+    "Qual é o teu maior medo que nunca contaste a ninguém?",
+    "Já mentiste para não sair de casa? Porquê?",
+    "Qual foi o teu primeiro crush? Como foi?",
+    "Quem aqui levavas para uma ilha deserta e porquê?",
+    "O que farias agora com 1 milhão de euros?",
+    "Qual é a tua maior vergonha na vida?",
+    "Se pudesses mudar algo em ti, o que seria?",
+    "Qual foi o sonho mais estranho que já tiveste?",
+    "Conta um segredo ou curiosidade tua.",
+    "Se hoje fosse o teu último dia, o que farias?",
+    "De 0 a 10, que nota darias a [ALVO] em termos de beleza?",
+    "Qual foi o pior presente que já recebeste?",
+    "Já nadaste pelado(a)?",
+    "Qual é o teu pior hábito secreto?",
+    "Já foste traído(a) ou traíste alguém?",
+    "Passavas a noite com [ALVO] por 1 milhão de euros?",
+    "Como foi o teu primeiro beijo?",
+    "Já beijaste mais de uma pessoa no mesmo dia? Quantas?",
+    "Qual o teu maior orgulho?",
+    "O que te faz querer fugir para outro planeta?",
+    "Qual foi a maior mentira que já contaste?",
+    "Que nota darias a [ALVO] como amigo(a)?",
+    "Qual a coisa mais embaraçosa que já fizeste em público?",
+    "Já foste apanhado(a) pela polícia?",
+    "Acreditas em amor à primeira vista?",
+    "Qual é o bicho que mais temes?",
+    "Quantos dias já ficaste sem tomar banho?",
+    "Já fizeste xixi na piscina? Conta.",
+    "Qual foi a tua maior bebedeira? O que aconteceu?",
+    "Se pudesses voltar no tempo, para onde ias?"
+  ],
+  d1: [
+    "Faz uma mímica de um animal durante 30 segundos.",
+    "Bebe um copo de água sem usar as mãos.",
+    "Dança como se ninguém estivesse a ver durante 1 minuto.",
+    "Sê o garçom do grupo até ao final da rodada.",
+    "Faz o máximo de flexões que conseguires em 1 minuto.",
+    "Faz um elogio sincero a cada pessoa desta roda.",
+    "Canta uma música favorita com [ALVO].",
+    "Encena um trecho de filme dramático para todos.",
+    "Deixa [ALVO] publicar uma mensagem qualquer em teu nome.",
+    "Fica sem usar a palavra 'não' até ao final da brincadeira.",
+    "Tenta encostar a língua ao nariz.",
+    "Faz uma imitação de [ALVO] durante 30 segundos.",
+    "Passa uma rodada a falar com sotaque de outro país.",
+    "Inventa uma poesia que rime com uma palavra bizarra.",
+    "Simula um pedido de casamento dramático a [ALVO].",
+    "Faz o máximo de abdominais que conseguires em 1 minuto.",
+    "Desliga o telemóvel até ao final do jogo.",
+    "Faz uma dança de robot durante 30 segundos.",
+    "Liga para alguém que não falas há mais de um mês.",
+    "Canta o hino nacional com a língua de fora.",
+    "Imita um professor a dar aula sobre um tema absurdo.",
+    "Faz 20 polichinelos gritando o nome de [ALVO] a cada um.",
+    "Inventa e apresenta um anúncio publicitário para [ALVO].",
+    "Passa a próxima rodada a andar como um pinguim."
+  ],
+  v2: [
+    "Quem aqui beijarias se fosses obrigado(a)?",
+    "O que mais te atrai em [ALVO]?",
+    "Já tiveste um sonho com alguém desta roda?",
+    "Um ano na prisão ou para sempre com o teu ex?",
+    "Casa na praia sem internet ou casebre com WiFi?",
+    "Já colocaste a culpa em alguém injustamente?",
+    "Já foste bloqueado(a) nas redes sociais? Por quem?",
+    "Preferes saber a data ou a causa da tua morte?",
+    "Quando foi a última vez que perdeste totalmente o controlo?",
+    "Qual o maior mico que alguma vez pagaste?",
+    "Do que te arrependes de já ter feito nesta vida?",
+    "Se o histórico do teu WhatsApp vazasse, apagavas a conversa com quem?",
+    "Qual a coisa mais engraçada que já fizeste para conquistar alguém?",
+    "Qual a maior mentira que já contaste para impressionar alguém?",
+    "Conta sobre a tua maior bebedeira.",
+    "O que é uma prova de amor real para ti?",
+    "Qual o limite que nunca cruzarias numa relação?",
+    "Qual o segredo que guardas há mais tempo?",
+    "Qual foi o pior encontro romântico que já tiveste?",
+    "Já enviaste uma mensagem ao destinatário errado? O que aconteceu?",
+    "Com que celebridade passarias uma semana e porquê?",
+    "Qual o teu maior erro com alguém que amaste?",
+    "O que te faz chorar mas nunca admites?",
+    "Já te arrependeste de uma tatuagem? Qual era?",
+    "O que te faz ter prazer e não é sexo?"
+  ],
+  d2: [
+    "Dá um beijo no pescoço de [ALVO].",
+    "Faz uma massagem nas costas de [ALVO].",
+    "Sussurra algo misterioso no ouvido de [ALVO].",
+    "Envia para alguém uma cantada terrível pelo WhatsApp.",
+    "Faz um discurso dramático e apaixonado sobre macarrão.",
+    "Finge que estás na balada e mostra como chegarias a [ALVO].",
+    "Chupa um limão como se fosse a coisa mais doce do mundo.",
+    "Mostra as tuas últimas mensagens do WhatsApp ao grupo.",
+    "Faz uma dança sensual usando só uma perna.",
+    "Publica uma enquete bizarra no teu Instagram agora.",
+    "Dá uma cambalhota onde estás.",
+    "Coloca o máximo de uvas na boca que conseguires.",
+    "Dá 10 beijinhos no chão com muito amor e dramatismo.",
+    "Penteia o cabelo de [ALVO] de forma ridícula.",
+    "Passa as próximas 2 rodadas a imitar um animal.",
+    "Tenta arrotar o alfabeto.",
+    "Usa as meias de [ALVO] como luvas até à próxima rodada.",
+    "Faz o 'passinho do cocô' durante 30 segundos.",
+    "Aproxima-te de [ALVO] e faz a dança da chuva.",
+    "Defende o político que mais odeias durante 1 minuto.",
+    "Comporta-te como um cachorro à procura de [ALVO] por 1 rodada.",
+    "Uiva como um lobo a olhar fixamente para [ALVO].",
+    "Manda mensagem a alguém com quem não falas há mais de 1 ano.",
+    "Publica um vídeo teu a cantar desafinado."
+  ],
+  v3: [
+    "Qual é a tua maior fantasia com [ALVO]?",
+    "Qual é o segredo mais obscuro que escondes?",
+    "Com quantas pessoas já ficaste na vida?",
+    "Como foi a tua primeira vez? Conta detalhes.",
+    "Já ficaste com [ALVO]? Serias capaz?",
+    "Qual a diferença entre amor e sexo na tua opinião?",
+    "Quem beijarias intensamente agora desta roda?",
+    "Qual parte do corpo beijarias de [ALVO]?",
+    "Achas [ALVO] a pessoa mais sexy desta brincadeira?",
+    "Qual a zona do teu corpo que mais te excita?",
+    "Algemas ou vendas?",
+    "Já tiveste sonhos eróticos com [ALVO]?",
+    "O que te corta o clima instantaneamente?",
+    "Qual o lugar mais inusitado onde já tiveste relações?",
+    "Sentirias atração por alguém do mesmo sexo? Já sentiste?",
+    "Amor romântico ou sexo intenso?",
+    "Qual a pior experiência na cama que já tiveste?",
+    "Qual o maior período que ficaste em 'seca'?",
+    "Já tiveste momentos íntimos com mais de uma pessoa no mesmo dia?",
+    "Luzes acesas, meia luz ou apagadas?",
+    "O que já fizeste na cama que jamais repetirias?",
+    "Qual a melhor coisa que [ALVO] poderia fazer contigo?"
+  ],
+  d3: [
+    "Tira uma peça de roupa agora.",
+    "Senta no colo de [ALVO] por 2 rodadas.",
+    "Deixa [ALVO] dar-te uma dentadinha na orelha.",
+    "Simula o teu olhar mais sexy para [ALVO] durante 20 segundos.",
+    "Toma um shot no umbigo de [ALVO] (body shot).",
+    "Sussurra no ouvido de [ALVO] as coisas que dizes na cama.",
+    "Morde (de leve) o pescoço de [ALVO].",
+    "Chupa uma fruta de forma extremamente provocante a olhar para [ALVO].",
+    "Faz uma dança sensual para [ALVO] durante 30 segundos.",
+    "Simula um strip-tease tirando uma peça de roupa lentamente.",
+    "Fica a centímetros da boca de [ALVO] sem o/a beijar durante 30 segundos.",
+    "Troca uma peça de roupa (não íntima) com [ALVO].",
+    "Faz uma trilha de beijos suaves do pulso até ao ombro de [ALVO].",
+    "Geme o nome de [ALVO] de forma dramática durante 5 segundos.",
+    "Come um pedaço de comida diretamente da boca de [ALVO].",
+    "Senta de frente para [ALVO] com pernas entrelaçadas durante 1 rodada.",
+    "Faz carinhos no cabelo de [ALVO] a olhar nos seus olhos por 1 minuto.",
+    "Mostra ao grupo a tua pasta de fotos ocultas (ou a última pesquisa).",
+    "Sussurra no ouvido de [ALVO] o teu maior fetiche.",
+    "Fica de mãos dadas com [ALVO] por baixo da mesa fazendo carinhos."
+  ]
+};
+
+const PUNISHMENTS = [
+  "Bebe um shot e deixa o vencedor tirar-te uma foto engraçada para os stories.",
+  "Faz uma declaração de amor dramática ao vencedor em vídeo.",
+  "Deixa o vencedor enviar uma mensagem de áudio para qualquer contacto no teu telemóvel.",
+  "Paga a próxima rodada de bebidas ou snacks para todos.",
+  "Sê o mordomo do vencedor durante os próximos 15 minutos.",
+  "Faz uma dança constrangedora e posta nos stories.",
+  "Envia uma mensagem de áudio de 30 segundos para o teu ex agora.",
+  "Deixa o vencedor escolher o teu próximo story para o Instagram."
+];
+
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+function defaultState() {
+  return {
+    players:  [],
+    turn:     0,
+    level:    2,
+    meta:     30,
+    secretV:  [],
+    secretD:  [],
+    active:   false,
+    cardType: null
+  };
+}
+let state = defaultState();
+
+/* Pool de cartas — baralha sem repetir a última carta usada */
+let usedCards = {};
+let lastCards  = {}; // última carta retirada por chave
+let lastTarget = null; // evita que o mesmo alvo calhe duas vezes seguidas
+
+function resetCards() {
+  usedCards = {};
+  lastCards  = {};
+  Object.keys(Q).forEach(k => { usedCards[k] = shuffle([...Q[k]]); });
+}
+resetCards();
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* ════════════════════════════════════════════
+   PERSISTENCE
+════════════════════════════════════════════ */
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch{}
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (!s || !Array.isArray(s.players)) return;
+    
+    // merge cuidadoso
+    state = Object.assign(defaultState(), s);
+    
+    // Se o jogo estava ativo num momento de refresh, volta ao setup mas preservando nomes e pontos
+    if (state.active) {
+      state.active = false;
+      state.turn = 0;
+      _cardBusy = false;
+      save(); // grava o estado resetado
     }
+    
+    syncSetup();
+  } catch{ state = defaultState(); }
+}
 
-    /* ================================================================
-       DADOS DO JOGO
-    ================================================================ */
-    const CHAVE_STORAGE = 'benjCarhl_jogo_v3';
+function syncSetup() {
+  $('inp-meta').value = state.meta;
+  setLevel(state.level, false);
+  renderPlayers();
+  renderSecretCount();
+}
 
-    const PERGUNTAS_ORIGINAIS = {
-        v1: [
-            "Qual é o teu maior medo infantil?", "Já mentiste para não sair de casa?", "Qual foi o teu primeiro crush?",
-            "Quem você levaria para uma ilha deserta?", "O que você faria com 1 milhão de reais agora?",
-            "Qual é a sua maior vergonha na vida?", "Se você pudesse mudar algo em você, o que seria?",
-            "Qual foi o sonho mais estranho que você já teve?", "Conte um segredo ou uma curiosidade sua.",
-            "Se hoje fosse o seu último dia de vida, o que você faria?", "É verdade que ninguém te chamou para sair nessa semana?",
-            "De 0 a 10, que nota você daria para [ALVO] em termos de beleza, simpatia ou inteligência?", "É verdade que você já ficou com [ALVO]?",
-            "Biscoito ou bolacha? Defenda sua teoria.", "Coxinha pela pontinha ou pela 'bundinha'?",
-            "O que os olhos não veem o coração não sente?", "Qual foi o pior presente que você já recebeu?",
-            "Se o mundo fosse acabar e você pudesse salvar apenas uma pessoa, salvaria [ALVO]?", "Você já nadou pelado?",
-            "Qual o seu pior hábito?", "É possível morrer de amor?", "É verdade que você já foi traído?",
-            "O que não pode faltar na sua geladeira?", "Você passaria a noite com [ALVO] por 1 milhão de reais?",
-            "É verdade que você já mandou nudes?", "Como foi o seu primeiro beijo?",
-            "Você já beijou mais de uma pessoa no mesmo dia? Quantas?", "Carnaval na folia ou no campo?",
-            "Dormir pelado ou com roupa?", "Você ficaria tranquilo se todo o histórico do seu WhatsApp ficasse público agora?",
-            "Entre quatro paredes vale tudo?", "Qual é o seu maior orgulho?", "É verdade que você ficaria com [ALVO]?",
-            "Você se acha bonito(a)?", "Qual foi o motivo do seu último término?", "Para onde você viajaria agora?",
-            "Mãe ou pai?", "Se você pudesse trazer de volta uma pessoa que já morreu, quem seria?",
-            "Se você pudesse mudar algo na história da humanidade, o que mudaria?", "Em qual país você gostaria de morar?",
-            "Qual animal você gostaria de ser?", "Em uma máquina do tempo, para que época da história ou momento da sua vida você voltaria?",
-            "É verdade que você já mentiu brincando de verdade ou desafio?", "WhatsApp ou Facebook?",
-            "Qual é a sua técnica de sedução infalível?", "O que te tira do sério?",
-            "Se você só pudesse salvar [ALVO] de um incêndio, você o faria?", "Qual foi a maior mentira que você já contou?",
-            "Bar ou balada?", "Como foi a primeira vez que você beijou na boca?", "Qual estilo de música você não suporta?",
-            "Já fez xixi na rua?", "Qual característica você realmente valoriza em um amigo?",
-            "Já foi pego pela polícia por alguma coisa?", "Você acredita em casamento?",
-            "Quem é a pessoa mais inteligente do mundo, para você?", "O que realmente é muito brega para você?",
-            "Já comeu comida que seria jogada fora?", "Qual a coisa mais estranha que você ama comer?",
-            "O que você gosta de cantar no chuveiro?", "Quando você termina de fazer o nº2 você se despede dele?",
-            "Já vomitou pelo nariz?", "Qual é o bicho que você tem mais medo?", "Quem é a pessoa que você tem mais medo?",
-            "Qual é o seu filme preferido?", "Você prefere ser rico ou famoso?", "Qual a pior mentira que já contaram sobre você?",
-            "Quantos dias você já ficou sem tomar banho?", "Você tem tatuagens?", "O que você não tatuaria de jeito nenhum?",
-            "Você participaria do BBB?", "Já fez xixi na piscina?", "Qual o pior presente que você já ganhou?",
-            "O que te faz ter vontade de fugir para outro planeta?", "Já comeu algum inseto?", "Já teve diarreia constrangedora?",
-            "Em quais superstições você acredita?", "Qual o segredo do sucesso?", "O que você faria se ganhasse na loteria?",
-            "Qual o seu sabor de pizza preferido?", "Você considera pizza de sushi algo socialmente aceitável?",
-            "Você acredita em vidas passadas?", "Se você pudesse ficar invisível, o que gostaria de observar?",
-            "Por qual tipo de talento você gostaria de ser famoso e reconhecido?", "Qual é a comida que te faz realmente muito feliz?",
-            "Se você pudesse voltar no tempo, para quando voltaria?", "Qual é sua bebida preferida?",
-            "Qual é o prato que você melhor cozinha?", "Qual outro idioma você gostaria de aprender?",
-            "O cliente tem sempre razão?", "No Halloween você escolhe doçuras ou travessuras?",
-            "O que é sorte grande para você?", "O que é que o dinheiro não pode comprar?", "Você sabe trocar pneu de carro?",
-            "Já pegou carona com um desconhecido?", "Qual a melhor invenção da face da terra?", "O que é terapia para você?",
-            "Inverno ou verão?", "Você gosta mais de Copa do Mundo ou Jogos Olímpicos?",
-            "Qual é a doença que você tem mais medo?", "Quem é um verdadeiro campeão sem medalha para você?"
-        ],
-        d1: [
-            "Faz uma mímica de um animal.", "Bebe um copo de água sem usar as mãos.", "Dança como se ninguém estivesse a ver.",
-            "Sê a pessoa que serve as bebidas até o final dessa rodada.", "Faz o máximo de flexões que você conseguir em 1 minuto.",
-            "Vira um shot de alguma bebida.", "Dança o funk do momento equilibrando um copo na cabeça.",
-            "Dê um beijo no pé de [ALVO].", "Fica sem olhar o celular até o final da brincadeira.",
-            "Troca o status de relacionamento nas redes sociais.", "Posta uma foto feia nas redes sociais.",
-            "Dança uma música de forró com [ALVO].", "Fazer um elogio a um desconhecido (ou a [ALVO]).",
-            "Escolhe uma música para cantar até o final sem errar.", "Encena um trecho de filme para todos.",
-            "Rebola em um bambolê imaginário.", "Deixa [ALVO] publicar uma mensagem qualquer em seu nome nas redes.",
-            "Fica sem usar a palavra 'não' até o final da brincadeira.", "Lamber o próprio cotovelo.",
-            "Tenta encostar a língua no nariz.", "Tenta colocar o pé atrás da cabeça.",
-            "Dança valsa com [ALVO].", "Faz uma imitação de [ALVO].", "Passa uma rodada brincando com os olhos vendados.",
-            "Liga para alguém que não conversas há muito tempo.", "Passa uma rodada falando com algum sotaque ou em outro idioma.",
-            "Mastiga um alho cru.", "Cria uma música de rap usando o nome de [ALVO] na letra.",
-            "Come uma colher com canela.", "Fica com 1 cubo de gelo no bolso até o final da brincadeira.",
-            "Canta uma música sem olhar a letra.", "Inventa uma poesia que rime com uma palavra bizarra escolhida por [ALVO].",
-            "Simula um pedido de casamento a [ALVO].", "Improvisa um número musical com a situação da brincadeira.",
-            "Toma 1 litro de água no menor tempo possível.", "Faz uma parada de mãos (pino).",
-            "Tira uma peça de roupa (casaco, sapatos, brincos...).", "Faz o máximo de abdominais que você conseguir em 1 minuto.",
-            "Desliga o celular até o final do jogo.", "Fala na língua do 'Pê' até o final da rodada.",
-            "Muda a sua foto de perfil para a sua pior foto.", "Passa a próxima rodada de mãos dadas com [ALVO].",
-            "Pronuncia 'farofa' com 1 colher de farofa na boca.", "Faz uma pose de yoga difícil.",
-            "Toma água de uma tigela como se fosse um cachorro.", "Imita um gato se limpando.",
-            "Revela a última mensagem que você mandou no WhatsApp."
-        ],
-        v2: [
-            "Quem aqui beijarias se fosses obrigado?", "O que mais te atrai em [ALVO]?", "Já tiveste um sonho com alguém nesta roda?",
-            "Qual foi a última vez que não deu tempo de chegar ao banheiro?", "1 ano na cadeia ou para todo o sempre com seu ex?",
-            "Casa na praia sem internet ou um casebre com WiFi?", "Você já colocou a culpa em alguém injustamente?",
-            "Já foi bloqueado em alguma rede social? Por quem?", "Já foi traído?", "Um sorriso falso ou um olhar gelado?",
-            "Prefere saber a data ou a causa da sua morte?", "Quando foi a última vez que você perdeu o controle?",
-            "Qual o maior mico que você já pagou na vida?", "Do que você não se orgulha de já ter feito nessa vida?",
-            "O que te faz ter prazer e não é sexo?", "Já foi algemado(a)?", "O que você compraria agora com mil reais?",
-            "Se o histórico do seu WhatsApp vazasse e você só pudesse apagar a conversa com uma pessoa, seria a de [ALVO]?",
-            "Qual foi o pior fora que você já levou de um crush?", "Qual a coisa mais engraçada que você já fez para conquistar alguém?",
-            "Qual a maior mentira que você já contou só para conquistar um crush?", "Qual a maior mentira que você já contou no trabalho?",
-            "Seu primeiro beijo teve gosto de quê?", "Qual é o palavrão mais feio do mundo para você?",
-            "Conte sobre a maior bebedeira da sua vida.", "O que é uma prova de amor real para você?",
-            "Se você tivesse que se alimentar apenas de uma comida para o resto da vida, qual seria?",
-            "Qual é a criatura mais estranha com a qual você se deparou?", "Você acredita em extraterrestres?"
-        ],
-        d2: [
-            "Dá um beijo no pescoço de [ALVO].", "Faz uma massagem nas costas de [ALVO].", "Sussurra algo no ouvido de [ALVO].",
-            "Recebe cócegas de [ALVO] por 1 minuto.", "Lava os pés de [ALVO].",
-            "Envia para algum contatinho uma cantada terrível do WhatsApp.", "Dança 'na boquinha da garrafa'.",
-            "Faz um discurso dramático no meio da sala.", "Finge que estás na balada e mostra como farias para chegar em [ALVO].",
-            "Chupa um limão como se fosse uma laranja doce.", "Mostra as tuas últimas mensagens do WhatsApp aqui na roda.",
-            "Mostra a última foto que você tirou de você mesmo no celular.", "Faz uma dança sensual usando só uma perna.",
-            "Publica uma enquete bizarra no teu Instagram.", "Toma o gole de algo e faz uma análise detalhada como se fosse um especialista.",
-            "Dança arrocha com [ALVO] ao som de música clássica.", "Dá uma cambalhota.",
-            "Coloca o máximo de uvas na boca que conseguir.", "Dê 10 beijinhos no chão, com muito amor.",
-            "Corta uma cebola imaginária e simula uma cena de novela triste.", "Penteia o cabelo de [ALVO] de uma forma ridícula.",
-            "Passa as próximas 2 rodadas a imitar um animal.", "Canta o hino do teu time de futebol rival.",
-            "Tenta arrotar o abecedário.", "Faz uma performance ao som de Michael Jackson.",
-            "Grita bem alto: 'Eu não aguento mais esta coceira na minha bunda!'", "Dança em cima de uma cadeira ou mesa.",
-            "Usa as meias de [ALVO] como se fossem luvas até à próxima rodada.",
-            "Posta uma enquete pedindo dicas de como parar uma diarreia.",
-            "Publica um vídeo teu a cantar desafinado.", "Vira um shot de bebida sem fazer careta.",
-            "Faz um show de dança ao som de funk de forma exagerada.", "Manda mensagem a alguém com quem não falas há mais de um ano.",
-            "Faz o passinho do cocô.", "Aproxima-te de [ALVO] e faz a dança da chuva.",
-            "Defende o político que mais odeias durante 1 minuto.", "Publique uma selfie com o dedo no nariz.",
-            "Comporta-te como um cachorro à procura de [ALVO] por 1 rodada.", "Tenta voar.", "Cheira as axilas de [ALVO].",
-            "Faz 50 abdominais como se fosses uma musa fitness enquanto contam.", "Uiva como um lobo a olhar para [ALVO]."
-        ],
-        v3: [
-            "Qual é a tua maior fantasia com [ALVO]?", "Tirarias a roupa aqui por 60 pontos?", "Qual é o segredo mais sujo que escondes?",
-            "Com quantas pessoas você já ficou na vida?", "Já ficou com marca de chupão?",
-            "Como foi a sua primeira vez?", "Já ficou com [ALVO]?", "Já nadou pelado acompanhado?",
-            "Qual a diferença entre amor e sexo na tua opinião?", "Você tem alguma tatuagem escondida?",
-            "Quem você beijaria intensamente dessa roda?", "Qual parte do corpo você beijaria de [ALVO]?",
-            "Se fosse para tirar uma peça de roupa de [ALVO], qual tiraria?", "Qual a sua cor de roupa íntima preferida?",
-            "Achas [ALVO] a pessoa mais sexy da brincadeira?", "Que tipo de conteúdo adulto mais te excita?",
-            "Qual é a zona do seu corpo que mais te excita?", "Aceitarias ter um momento íntimo com [ALVO]?",
-            "Algemas ou vendas?", "Palavras sujas te excitam? Quais?", "Você tem sonhos eróticos? O [ALVO] já esteve neles?",
-            "O que te faz gritar de prazer?", "Descreva o ambiente perfeito para uma noite intensa.",
-            "Luzes acesas, meia luz ou apagadas?", "O que você já fez na cama que jamais faria de novo?",
-            "O que te corta o clima instantaneamente?", "Qual o lugar mais inusitado onde já tiveste relações?",
-            "Já fez coisas virtuais picantes?", "Já teve conversas muito quentes por telefone?",
-            "Já foi apanhado em flagrante num local público?", "Sentirias atração por alguém do mesmo sexo?",
-            "Amor romântico ou sexo selvagem?", "Conte sobre a sua experiência mais intensa.",
-            "Qual a pior experiência na cama que você já teve?", "Já correu risco de ser apanhado ao ar livre?",
-            "Já foi a uma loja de artigos para adultos?", "O que te frustra mais quando estás acompanhado(a)?",
-            "Qual é a melhor coisa que [ALVO] poderia fazer contigo na cama?",
-            "Qual o maior período de tempo que você já ficou em 'seca'?",
-            "Qual foi o teu recorde num só dia?", "Já tiveste momentos íntimos com mais de uma pessoa no mesmo dia?"
-        ],
-        d3: [
-            "Tira uma peça de roupa.", "Senta no colo de [ALVO] por 2 rodadas.", "Deixa [ALVO] dar-te uma dentadinha na orelha.",
-            "Simula o teu olhar mais sexy para [ALVO].", "Toma um shot no umbigo de [ALVO] (body shot).",
-            "Sussurra no ouvido de [ALVO] as coisas que costumas dizer na cama.", "Morde (de leve) o pescoço de [ALVO].",
-            "Passa a próxima rodada sentado no colo de [ALVO].", "Chupa uma fruta de forma extremamente provocante a olhar para [ALVO].",
-            "Faz uma dança sensual (lap dance) em [ALVO] por 30 segundos.",
-            "Deixa que [ALVO] te faça uma massagem nos ombros de forma sedutora.",
-            "Simula um strip-tease tirando uma peça de roupa lentamente para [ALVO].",
-            "Coloca um cubo de gelo na boca e desliza pelo pescoço de [ALVO].",
-            "Manda uma mensagem de voz muito sexy para o teu crush.",
-            "Passa creme nas mãos ou braços de [ALVO] de forma muito sensual.",
-            "Manda uma mensagem ousada convidando o crush para jogar.",
-            "Envia uma foto ou sticker provocante ao teu crush.",
-            "Fica a centímetros da boca de [ALVO] sem o/a beijar durante 30 segundos de tensão.",
-            "Troca uma peça de roupa (não íntima) com [ALVO].",
-            "Manda uma mensagem para o teu ex a dizer: 'Saudades do que a gente viveu'.",
-            "Faz uma trilha de beijos suaves do pulso até ao ombro de [ALVO].",
-            "Geme o nome de [ALVO] de forma muito dramática durante 5 segundos.",
-            "Come um pedaço de comida diretamente da boca de [ALVO] sem usar as mãos.",
-            "Tira as meias de [ALVO] usando apenas os teus dentes.",
-            "Finge que estás a ter um momento de muito prazer de cada vez que alguém disser o teu nome na próxima rodada.",
-            "Senta-te de frente para [ALVO] com as pernas entrelaçadas durante 1 rodada inteira.",
-            "Faz carinhos no cabelo ou pescoço de [ALVO] enquanto olhas fixamente nos seus olhos por 1 minuto.",
-            "Tira a tua própria t-shirt de forma extremamente lenta ao som de uma música sedutora.",
-            "Fica no colo de [ALVO] e rebola levemente ao som da próxima música que tocar.",
-            "Mostra ao grupo a tua pasta de 'fotos ocultas' do telemóvel (ou a última pesquisa do navegador).",
-            "Sussurra no ouvido de [ALVO] qual é o maior fetiche que tens, mas que o grupo não pode ouvir.",
-            "Fica de mãos dadas com [ALVO] por baixo da mesa e façam carinhos até ao vosso próximo turno."
-        ]
-    };
+/* ════════════════════════════════════════════
+   SCREENS
+════════════════════════════════════════════ */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  
+  const targetScreen = $('screen-' + name);
+  targetScreen.classList.add('active');
+  $('scoreboard').classList.toggle('visible', name === 'game');
+  
+  // Mover o foco para o novo ecrã (Melhoria de Acessibilidade/UX)
+  targetScreen.setAttribute('tabindex', '-1');
+  targetScreen.focus({ preventScroll: true });
 
-    const CASTIGOS_FINAIS = [
-        "Bebe um shot e deixa o vencedor tirar-te uma foto engraçada e postar no stories.",
-        "Faz uma declaração de amor dramática ao vencedor em vídeo.",
-        "Deixa o vencedor enviar uma mensagem de áudio para qualquer contacto no teu telemóvel.",
-        "Paga a próxima rodada de bebidas ou lanches para todos os jogadores.",
-        "Sê o 'mordomo' do vencedor durante os próximos 15 minutos."
-    ];
+  if (name === 'game') {
+    updateScoreboard();
+    updateProgress();
+  }
+}
 
-    let PERGUNTAS = JSON.parse(JSON.stringify(PERGUNTAS_ORIGINAIS));
-    const PONTOS_POR_TIPO = { v: 2, d: 4 };
+/* ════════════════════════════════════════════
+   SETUP — PLAYERS
+════════════════════════════════════════════ */
+function addPlayer() {
+  if (!dbt('add')) return;
+  const inp  = $('inp-name');
+  const raw  = inp.value.trim();
+  if (!raw) { showToast('Escreve um nome primeiro!'); return; }
+  const name = sanitize(raw).slice(0, 20);
+  if (state.players.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    showToast('Este jogador já está na roda!'); negBeep(); return;
+  }
+  if (state.players.length >= 10) {
+    showToast('Máximo de 10 jogadores!'); negBeep(); return;
+  }
+  state.players.push({ name, pts: 0 });
+  inp.value = '';
+  // inp.focus(); // Removido para evitar salto do teclado em mobile
+  renderPlayers();
+  save();
+  tick();
+  
+  if (typeof gtag === 'function') gtag('event', 'add_player', { 'event_category': 'Engagement' });
+}
 
-    let estadoJogo = {
-        jogadores: [], turnoAtual: 0, nivel: 1, metaPontos: 30,
-        cartasCustomVerdade: [], cartasCustomDesafio: [],
-        tipoTurnoAtual: null, jogoAtivo: false
-    };
+function removePlayer(i) {
+  state.players.splice(i, 1);
+  renderPlayers();
+  save();
+}
 
-    /* ================================================================
-       FIX: variável de bloqueio substituída por função de debounce
-       usando timestamps — evita travar o jogo se o timeout falhar
-    ================================================================ */
-    let _ultimoClique = 0;
-    function podeContinuar(msMinimo = 700) {
-        const agora = Date.now();
-        if (agora - _ultimoClique < msMinimo) return false;
-        _ultimoClique = agora;
-        return true;
+function renderPlayers() {
+  const list = $('players-list');
+  if (!state.players.length) { list.innerHTML = ''; return; }
+  list.innerHTML = state.players.map((p, i) =>
+    `<div class="player-chip" role="listitem">
+      <span>${esc(p.name)}</span>
+      <button class="chip-del" data-idx="${i}" aria-label="Remover ${esc(p.name)}">×</button>
+    </div>`
+  ).join('');
+  // event delegation para evitar inline handlers
+  list.querySelectorAll('.chip-del').forEach(btn => {
+    btn.addEventListener('click', () => removePlayer(Number(btn.dataset.idx)));
+  });
+}
+
+/* ════════════════════════════════════════════
+   LEVEL
+════════════════════════════════════════════ */
+function setLevel(lvl, doSave = true) {
+  state.level = lvl;
+  document.querySelectorAll('.lvl-btn').forEach(b => {
+    const active = Number(b.dataset.lvl) === lvl;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-checked', String(active));
+  });
+  if (doSave) save();
+}
+
+/* ════════════════════════════════════════════
+   SECRET CARDS
+════════════════════════════════════════════ */
+function saveSecret() {
+  if (!dbt('secret')) return;
+  const inp  = $('inp-secret');
+  const type = $('sel-card-type').value;
+  const text = sanitize(inp.value.trim()).slice(0, 150);
+  if (!text) { showToast('Escreve o conteúdo da carta!'); return; }
+  if (type === 'v') state.secretV.push(text);
+  else state.secretD.push(text);
+  inp.value = '';
+  renderSecretCount();
+  save();
+  showToast('Carta secreta guardada! 🤫');
+  tick();
+
+  if (typeof gtag === 'function') gtag('event', 'add_secret_card', { 'card_type': type });
+}
+
+function renderSecretCount() {
+  const total = state.secretV.length + state.secretD.length;
+  $('secret-count').textContent = total
+    ? `${total} carta${total !== 1 ? 's' : ''} secreta${total !== 1 ? 's' : ''} guardada${total !== 1 ? 's' : ''}`
+    : '';
+}
+
+/* ════════════════════════════════════════════
+   START GAME
+════════════════════════════════════════════ */
+function startGame() {
+  if (!dbt('start', 800)) return;
+  if (state.players.length < 2) {
+    showToast('Precisas de pelo menos 2 jogadores! 👥'); negBeep(); return;
+  }
+  const mv = parseInt($('inp-meta').value, 10);
+  state.meta = clamp(isNaN(mv) ? 30 : mv, 10, 60);
+  state.active   = true;
+  state.turn     = 0;
+  state.cardType = null;
+  resetCards();
+  state.players.forEach(p => { p.pts = 0; });
+  save();
+  showScreen('game');
+  updateTurnDisplay();
+  tick();
+
+  if (typeof gtag === 'function') {
+      gtag('event', 'start_game', {
+          'players_count': state.players.length,
+          'level': state.level,
+          'target_score': state.meta
+      });
+  }
+}
+
+/* ════════════════════════════════════════════
+   GAME — PICK CARD
+════════════════════════════════════════════ */
+function pickCard(type) {
+  const key      = type + state.level;
+  const secrets = type === 'v' ? state.secretV : state.secretD;
+
+  // 30% chance carta secreta se existir
+  if (secrets.length && Math.random() < 0.30) {
+    const idx = Math.floor(Math.random() * secrets.length);
+    // CORREÇÃO: Remove a carta do array para não se repetir infinitamente
+    const secretCard = secrets.splice(idx, 1)[0]; 
+    
+    save(); // Grava a remoção
+    renderSecretCount(); // Atualiza o contador na UI do Setup
+    
+    return secretCard;
+  }
+
+  let pool = usedCards[key];
+  if (!pool || !pool.length) {
+    // recarregar e garantir que a próxima não é igual à última
+    pool = shuffle([...Q[key]]);
+    if (lastCards[key] && pool[0] === lastCards[key] && pool.length > 1) {
+      [pool[0], pool[1]] = [pool[1], pool[0]];
     }
+    usedCards[key] = pool;
+  }
 
-    /* ================================================================
-       ÁUDIO
-    ================================================================ */
-    let audioCtx;
-    function tocarSom(frequencia, duracao) {
-        try {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.frequency.value = frequencia;
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duracao);
-        } catch (e) { /* áudio não disponível */ }
-    }
+  const card = pool.shift();
+  lastCards[key] = card;
+  return card;
+}
 
-    /* ================================================================
-       CONFETES — FIX: geração com dx aleatório para melhor spread
-    ================================================================ */
-    function lancarConfetes() {
-        const container = document.getElementById('confetti-container');
-        container.innerHTML = '';
-        const cores = ['#00d4ff', '#ff007f', '#7000ff', '#00ff88', '#fff', '#ffcc00'];
-        for (let i = 0; i < 60; i++) {
-            const c = document.createElement('div');
-            c.classList.add('confetti');
-            c.style.cssText = `
-                left: ${Math.random() * 100}vw;
-                background-color: ${cores[Math.floor(Math.random() * cores.length)]};
-                border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-                width: ${6 + Math.random() * 6}px;
-                height: ${6 + Math.random() * 6}px;
-                --dx: ${(Math.random() - 0.5) * 80}px;
-                animation: fall ${2 + Math.random() * 2.5}s linear forwards;
-                animation-delay: ${Math.random() * 1.2}s;
-            `;
-            container.appendChild(c);
-        }
-        setTimeout(() => { container.innerHTML = ''; }, 6000);
-    }
+function resolveTarget(text) {
+  const others = state.players.filter((_, i) => i !== state.turn);
+  if (!others.length) return text.replace(/\[ALVO\]/gi, 'alguém'); // fallback caso não existam outros
 
-    /* ================================================================
-       PERSISTÊNCIA
-    ================================================================ */
-    function guardarEstado() {
-        try { localStorage.setItem(CHAVE_STORAGE, JSON.stringify(estadoJogo)); }
-        catch (e) { /* modo privado ou storage bloqueado */ }
-    }
+  // Tenta filtrar os outros jogadores removendo o último alvo usado
+  let pool = others.filter(p => p.name !== lastTarget);
+  // Se o pool ficar vazio (ex: jogo de apenas 2 pessoas), recua para o array completo de outros jogadores
+  if (!pool.length) pool = others;
 
-    function carregarEstado() {
-        try {
-            const dados = localStorage.getItem(CHAVE_STORAGE);
-            if (!dados) return;
-            const estado = JSON.parse(dados);
-            // FIX: validação mais robusta antes de restaurar estado
-            if (!estado || !Array.isArray(estado.jogadores)) return;
-            estadoJogo = estado;
-            if (!estadoJogo.cartasCustomVerdade) estadoJogo.cartasCustomVerdade = [];
-            if (!estadoJogo.cartasCustomDesafio) estadoJogo.cartasCustomDesafio = [];
-            if (estadoJogo.jogoAtivo) {
-                mostrarTelaJogo();
-            } else {
-                sincronizarSetupComEstado();
-            }
-        } catch (e) { /* estado corrompido, ignora */ }
-    }
+  const target = rnd(pool).name;
+  lastTarget = target; // atualiza o rastreador de alvo
 
-    function sincronizarSetupComEstado() {
-        document.getElementById('campo-meta').value = estadoJogo.metaPontos || 30;
-        atualizarBotoesNivel();
-        renderizarListaNomes();
-    }
+  return text.replace(/\[ALVO\]/gi, target);
+}
 
-    /* ================================================================
-       SETUP — JOGADORES
-    ================================================================ */
-    function adicionarJogador() {
-        const campo = document.getElementById('campo-nome');
-        const nomeBruto = campo.value.trim();
-        if (nomeBruto === '') return;
+/* ════════════════════════════════════════════
+   GAME — DRAW CARD
+════════════════════════════════════════════ */
+let _cardBusy = false;
 
-        // FIX: sanitização ANTES de guardar no estado (não apenas na exibição)
-        const nome = nomeBruto.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+function drawCard(type) {
+  if (_cardBusy) return;
+  if (!dbt('draw', 400)) return;
+  _cardBusy = true;
 
-        if (estadoJogo.jogadores.some(j => j.nome.toLowerCase() === nome.toLowerCase())) {
-            tocarSom(150, 0.3);
-            alert('Este jogador já está na roda!');
-            return;
-        }
+  // Feedback Háptico
+  if (navigator.vibrate) navigator.vibrate(30);
 
-        estadoJogo.jogadores.push({ nome, pontos: 0 });
-        campo.value = '';
-        // FIX: NÃO chamamos campo.focus() no mobile para não rolar a página
-        renderizarListaNomes();
-        tocarSom(600, 0.08);
-        guardarEstado();
+  // Desativar botões de escolha imediatamente
+  setChooseBtns(false);
 
-        // 📈 GA4 Track Event
-        if (typeof gtag === 'function') {
-            gtag('event', 'add_player', { 'event_category': 'Engagement' });
-        }
-    }
+  const text   = resolveTarget(pickCard(type));
+  const cardEl = $('card-3d');
+  const textEl = $('card-text');
 
-    function removerJogador(index) {
-        estadoJogo.jogadores.splice(index, 1);
-        renderizarListaNomes();
-        guardarEstado();
-    }
+  // Reset visual
+  cardEl.classList.remove('flipped', 'theme-truth', 'theme-dare');
 
-    function renderizarListaNomes() {
-        const lista = document.getElementById('lista-nomes');
-        if (estadoJogo.jogadores.length === 0) {
-            lista.textContent = '';
-            return;
-        }
-        lista.innerHTML = estadoJogo.jogadores.map((j, i) =>
-            `<span style="display:inline-flex; align-items:center; gap:4px; background:rgba(255,255,255,0.08); border-radius:20px; padding:3px 10px; margin:3px;">
-                ${j.nome}
-                <button onclick="removerJogador(${i})" style="background:none;border:none;color:#ff4d4d;cursor:pointer;font-size:0.9rem;padding:0 2px;line-height:1;" title="Remover">×</button>
-            </span>`
-        ).join('');
-    }
+  // forçar reflow para garantir reset da animação
+  void cardEl.offsetWidth;
 
-    /* ================================================================
-       NÍVEIS
-    ================================================================ */
-    const NIVEIS = [{ id: 1, rotulo: '🧊 Leve' }, { id: 2, rotulo: '🔥 Quente' }, { id: 3, rotulo: '🧨 Caos' }];
+  state.cardType = type;
 
-    function criarBotoesNivel() {
-        const container = document.getElementById('niveis');
-        NIVEIS.forEach(({ id, rotulo }) => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-nivel';
-            btn.dataset.nivel = id;
-            btn.textContent = rotulo;
-            btn.addEventListener('click', () => selecionarNivel(id));
-            container.appendChild(btn);
-        });
-        atualizarBotoesNivel();
-    }
+  if (typeof gtag === 'function') {
+      gtag('event', 'draw_card', { 'card_type': type === 'v' ? 'truth' : 'dare', 'level': state.level });
+  }
 
-    function selecionarNivel(nivel) {
-        estadoJogo.nivel = nivel;
-        atualizarBotoesNivel();
-        tocarSom(400, 0.1);
-        guardarEstado();
-    }
+  // Limpar conteúdo antes de virar (CORREÇÃO DE SEGURANÇA NO DOM)
+  textEl.textContent = text; // Define o texto e limpa nós antigos em segurança
 
-    function atualizarBotoesNivel() {
-        document.querySelectorAll('.btn-nivel').forEach(btn => {
-            btn.classList.toggle('ativo', Number(btn.dataset.nivel) === estadoJogo.nivel);
-        });
-    }
+  // Inserir Badge
+  const badge = document.createElement('div');
+  badge.className = 'card-type-badge';
+  badge.textContent = type === 'v' ? 'Verdade' : 'Desafio';
+  textEl.appendChild(badge);
 
-    /* ================================================================
-       CARTAS CUSTOMIZADAS
-    ================================================================ */
-    function guardarCartaCustom() {
-        const campo = document.getElementById('campo-carta-custom');
-        const tipo = document.getElementById('tipo-carta-custom').value;
-        const textoLimpo = campo.value.trim().replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+  cardEl.classList.add(type === 'v' ? 'theme-truth' : 'theme-dare');
 
-        if (textoLimpo === '') return;
-        if (tipo === 'v') estadoJogo.cartasCustomVerdade.push(textoLimpo);
-        else estadoJogo.cartasCustomDesafio.push(textoLimpo);
-
-        campo.value = '';
-        alert('Carta secreta guardada com sucesso!');
-        tocarSom(800, 0.1);
-        guardarEstado();
-    }
-
-    /* ================================================================
-       INICIAR JOGO
-    ================================================================ */
-    function iniciarJogo() {
-        if (estadoJogo.jogadores.length < 2) {
-            tocarSom(150, 0.3);
-            alert('Precisas de pelo menos 2 jogadores para iniciar!');
-            return;
-        }
-        const valorMeta = parseInt(document.getElementById('campo-meta').value, 10);
-        // FIX: clamp automático do valor ao invés de apenas rejeitar
-        const metaFinal = Math.max(10, Math.min(60, isNaN(valorMeta) ? 30 : valorMeta));
-        document.getElementById('campo-meta').value = metaFinal;
-
-        estadoJogo.metaPontos = metaFinal;
-        estadoJogo.jogoAtivo = true;
-        mostrarTelaJogo();
-        guardarEstado();
-
-        // 📈 GA4 Track Event
-        if (typeof gtag === 'function') {
-            gtag('event', 'start_game', { 
-                'players_count': estadoJogo.jogadores.length, 
-                'level': estadoJogo.nivel,
-                'target_score': estadoJogo.metaPontos
-            });
-        }
-    }
-
-    function mostrarTelaJogo() {
-        document.getElementById('tela-setup').classList.add('oculto');
-        document.getElementById('painel-esquerdo').classList.add('oculto');
-        document.getElementById('painel-direito').classList.add('oculto');
-        document.getElementById('tela-jogo').classList.remove('oculto');
-        document.getElementById('placar').classList.remove('oculto');
-        // FIX: garantir que os controles estejam no estado correto ao restaurar jogo
-        document.getElementById('controles-sorteio').classList.remove('oculto');
-        document.getElementById('controles-validacao').classList.add('oculto');
-        // FIX: garantir que a carta esteja virada para frente ao restaurar
-        const carta = document.getElementById('carta-principal');
-        carta.classList.remove('virada', 'tema-v', 'tema-d');
-        atualizarPlacar();
-    }
-
-    function atualizarPlacar() {
-        const jogadorAtual = estadoJogo.jogadores[estadoJogo.turnoAtual];
-        if (!jogadorAtual) return;
-        document.getElementById('nome-vez').textContent = jogadorAtual.nome;
-        document.getElementById('lista-pontos').innerHTML = estadoJogo.jogadores
-            .map(j => `<div class="placar-item"><span>${j.nome}</span><b>${j.pontos}</b></div>`).join('');
-    }
-
-    /* ================================================================
-       LÓGICA DO TURNO
-    ================================================================ */
-    function sortearCarta(tipo) {
-        const chave = tipo + estadoJogo.nivel;
-        let cartasBase = PERGUNTAS[chave] || [];
-        const cartasCustom = tipo === 'v' ? estadoJogo.cartasCustomVerdade : estadoJogo.cartasCustomDesafio;
-
-        const usarCustom = Math.random() > 0.7 && cartasCustom.length > 0;
-        let lista = usarCustom ? cartasCustom : cartasBase;
-
-        // FIX: se lista ficou vazia, recarrega do original
-        if (lista.length === 0) {
-            if (usarCustom) {
-                lista = cartasBase;
-            }
-            if (lista.length === 0) {
-                PERGUNTAS[chave] = [...PERGUNTAS_ORIGINAIS[chave]];
-                lista = PERGUNTAS[chave];
-            }
-        }
-
-        const indice = Math.floor(Math.random() * lista.length);
-        const frase = lista[indice];
-        lista.splice(indice, 1);
-        return frase;
-    }
-
-    function resolverAlvo(frase) {
-        const outros = estadoJogo.jogadores.filter((_, i) => i !== estadoJogo.turnoAtual);
-        const nomeAlvo = outros.length > 0 ? outros[Math.floor(Math.random() * outros.length)].nome : 'alguém';
-        // FIX: substituição case-insensitive de todas as ocorrências de [ALVO]
-        return frase.replace(/\[ALVO\]/gi, nomeAlvo);
-    }
-
-    function iniciarTurno(tipo) {
-        if (!podeContinuar()) return;
-
-        // FIX: desabilita botões visualmente durante a animação
-        setBotoesJogo(false);
-
-        const frase = resolverAlvo(sortearCarta(tipo));
-        // FIX: usa textContent (não innerHTML) para evitar XSS em cartas customizadas
-        const textoCarta = document.getElementById('texto-carta');
-        textoCarta.textContent = frase;
-
-        const carta = document.getElementById('carta-principal');
-        carta.classList.remove('tema-v', 'tema-d');
-        // FIX: forçar reflow antes de adicionar nova classe para garantir transição
-        void carta.offsetWidth;
-        carta.classList.add(tipo === 'v' ? 'tema-v' : 'tema-d');
-        carta.classList.add('virada');
-
-        estadoJogo.tipoTurnoAtual = tipo;
-        document.getElementById('controles-sorteio').classList.add('oculto');
-
-        // FIX: aguarda a animação (600ms) antes de mostrar validação
-        setTimeout(() => {
-            document.getElementById('controles-validacao').classList.remove('oculto');
-            setBotoesJogo(true);
-        }, 650);
-
-        tocarSom(200, 0.5);
-
-        // 📈 GA4 Track Event
-        if (typeof gtag === 'function') {
-            gtag('event', 'draw_card', { 'card_type': tipo === 'v' ? 'truth' : 'dare' });
-        }
-    }
-
-    function finalizarTurno(sucesso) {
-        if (!podeContinuar()) return;
-
-        setBotoesJogo(false);
-
-        const pontos = PONTOS_POR_TIPO[estadoJogo.tipoTurnoAtual] || 2;
-        estadoJogo.jogadores[estadoJogo.turnoAtual].pontos += sucesso ? pontos : -pontos;
-
-        if (estadoJogo.jogadores[estadoJogo.turnoAtual].pontos >= estadoJogo.metaPontos) {
-            mostrarTelaFinal();
-            guardarEstado();
-            setBotoesJogo(true);
-            return;
-        }
-
-        estadoJogo.turnoAtual = (estadoJogo.turnoAtual + 1) % estadoJogo.jogadores.length;
-
-        const carta = document.getElementById('carta-principal');
-        carta.classList.remove('virada');
-        document.getElementById('controles-validacao').classList.add('oculto');
-
-        // FIX: aguarda o flip de volta (600ms) antes de limpar temas e mostrar sorteio
-        setTimeout(() => {
-            carta.classList.remove('tema-v', 'tema-d');
-            document.getElementById('controles-sorteio').classList.remove('oculto');
-            setBotoesJogo(true);
-        }, 650);
-
-        atualizarPlacar();
-        guardarEstado();
-    }
-
-    // FIX: função centralizada para habilitar/desabilitar todos os botões de ação
-    function setBotoesJogo(ativo) {
-        const ids = ['btn-verdade', 'btn-desafio', 'btn-sim', 'btn-nao'];
-        ids.forEach(id => {
-            const btn = document.getElementById(id);
-            if (btn) btn.disabled = !ativo;
-        });
-    }
-
-    /* ================================================================
-       TELA FINAL
-    ================================================================ */
-    function mostrarTelaFinal() {
-        document.getElementById('tela-jogo').classList.add('oculto');
-        document.getElementById('cabecalho').classList.add('oculto');
-        document.getElementById('placar').classList.add('oculto');
-        document.getElementById('tela-final').classList.remove('oculto');
-
-        const ord = [...estadoJogo.jogadores].sort((a, b) => b.pontos - a.pontos);
-        document.getElementById('nome-vencedor').textContent = '👑 ' + ord[0].nome;
-        document.getElementById('nome-perdedor').textContent = ord[ord.length - 1].nome;
-        document.getElementById('texto-castigo').textContent = CASTIGOS_FINAIS[Math.floor(Math.random() * CASTIGOS_FINAIS.length)];
-
-        tocarSom(880, 0.8);
-        setTimeout(() => tocarSom(1108, 0.6), 200);
-        setTimeout(() => tocarSom(1318, 0.9), 400);
-        lancarConfetes();
-        estadoJogo.jogoAtivo = false;
-
-        // 📈 GA4 Track Event
-        if (typeof gtag === 'function') {
-            gtag('event', 'finish_game', { 'winner': ord[0].nome, 'level': estadoJogo.nivel });
-        }
-    }
-
-    /* ================================================================
-       RECOMEÇAR / NOVA PARTIDA
-    ================================================================ */
-    function recomecarTudo() {
-        try { localStorage.removeItem(CHAVE_STORAGE); } catch (e) {}
-        location.reload();
-    }
-
-    function novaPartida() {
-        // FIX: try/catch completo (faltava na versão original)
-        try {
-            estadoJogo.jogadores.forEach(j => j.pontos = 0);
-            estadoJogo.turnoAtual = 0;
-            estadoJogo.jogoAtivo = false;
-            PERGUNTAS = JSON.parse(JSON.stringify(PERGUNTAS_ORIGINAIS));
-            guardarEstado();
-        } catch (e) {}
-        location.reload();
-    }
-
-    /* ================================================================
-       FIX: Listeners com passive:true onde possível para melhor
-       performance de scroll no mobile; touchstart previne duplo disparo
-    ================================================================ */
-    function adicionarListenerBotao(el, fn) {
-        if (!el) return;
-        let tocado = false;
-        el.addEventListener('touchstart', (e) => {
-            tocado = true;
-            // NÃO chamamos preventDefault aqui para não bloquear o scroll
-        }, { passive: true });
-        el.addEventListener('click', (e) => {
-            if (tocado) { tocado = false; }
-            fn(e);
-        });
-    }
-
-    /* ================================================================
-       INICIALIZAÇÃO
-    ================================================================ */
-    window.addEventListener('load', () => {
-        criarBotoesNivel();
-
-        adicionarListenerBotao(document.getElementById('btn-adicionar'), adicionarJogador);
-        adicionarListenerBotao(document.getElementById('btn-guardar-carta'), guardarCartaCustom);
-        adicionarListenerBotao(document.getElementById('btn-iniciar'), iniciarJogo);
-        adicionarListenerBotao(document.getElementById('btn-verdade'), () => iniciarTurno('v'));
-        adicionarListenerBotao(document.getElementById('btn-desafio'), () => iniciarTurno('d'));
-        adicionarListenerBotao(document.getElementById('btn-sim'), () => finalizarTurno(true));
-        adicionarListenerBotao(document.getElementById('btn-nao'), () => finalizarTurno(false));
-        adicionarListenerBotao(document.getElementById('btn-recomecar'), recomecarTudo);
-        adicionarListenerBotao(document.getElementById('btn-nova-partida'), novaPartida);
-
-        document.getElementById('campo-nome').addEventListener('keypress', e => {
-            if (e.key === 'Enter') { e.preventDefault(); adicionarJogador(); }
-        });
-
-        // FIX: clamp da meta em tempo real ao sair do campo
-        const campoMeta = document.getElementById('campo-meta');
-        campoMeta.addEventListener('blur', () => {
-            const v = parseInt(campoMeta.value, 10);
-            campoMeta.value = Math.max(10, Math.min(60, isNaN(v) ? 30 : v));
-        });
-
-        carregarEstado();
+  // Virar com duplo rAF para garantir que o browser processou o reset
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      cardEl.classList.add('flipped');
+      flipBeep(type === 'v');
     });
-    </script>
+  });
+
+  // Mostrar botões de validação após a animação
+  setTimeout(() => {
+    // Só mostra os botões se continuarmos no ecrã de jogo
+    if (state.active) {
+      $('ctrls-choose').classList.add('hidden');
+      $('ctrls-validate').classList.remove('hidden');
+      $('validate-hint').classList.remove('hidden');
+      setValidateBtns(true);
+    }
+    _cardBusy = false;
+  }, 620);
+}
+
+/* ════════════════════════════════════════════
+   GAME — FINISH TURN
+════════════════════════════════════════════ */
+function finishTurn(success) {
+  if (_cardBusy) return;
+  if (!dbt('validate', 400)) return;
+  _cardBusy = true;
+
+  // Feedback Háptico: vibração rápida p/ sucesso, vibração longa/padrão p/ recusa
+  if (navigator.vibrate) navigator.vibrate(success ? 60 : [100, 40, 100]);
+
+  setValidateBtns(false);
+
+  const pts   = state.cardType === 'd' ? 4 : 2;
+  const delta = success ? pts : -pts;
+  state.players[state.turn].pts = Math.max(0, state.players[state.turn].pts + delta);
+
+  flashPoints(delta);
+  success ? beep(660, .2) : negBeep();
+
+  updateScoreboard();
+
+  // Verificar vitória
+  if (state.players[state.turn].pts >= state.meta) {
+    save();
+    setTimeout(() => {
+      _cardBusy = false;
+      showFinal();
+    }, 450);
+    return;
+  }
+
+  // Avançar turno
+  state.turn = (state.turn + 1) % state.players.length;
+  save();
+
+  const cardEl = $('card-3d');
+  cardEl.classList.remove('flipped');
+
+  setTimeout(() => {
+    // Limpar estado visual da carta
+    cardEl.classList.remove('theme-truth', 'theme-dare');
+    
+    // Limpa a carta inteira (CORREÇÃO DE SEGURANÇA NO DOM)
+    $('card-text').textContent = '';
+
+    $('ctrls-validate').classList.add('hidden');
+    $('validate-hint').classList.add('hidden');
+    $('ctrls-choose').classList.remove('hidden');
+
+    updateTurnDisplay();
+    updateProgress();
+    updateScoreboard();
+
+    setChooseBtns(true);
+    _cardBusy = false;
+  }, 580);
+}
+
+/* ════════════════════════════════════════════
+   GAME — UI HELPERS
+════════════════════════════════════════════ */
+function setChooseBtns(on) {
+  $('btn-truth').disabled = !on;
+  $('btn-dare').disabled  = !on;
+}
+function setValidateBtns(on) {
+  $('btn-yes').disabled = !on;
+  $('btn-no').disabled  = !on;
+}
+
+function updateTurnDisplay() {
+  const p = state.players[state.turn];
+  if (!p) return;
+  const el = $('turn-name');
+  el.classList.add('fade');
+  setTimeout(() => {
+    el.textContent = p.name;
+    el.classList.remove('fade');
+  }, 180);
+}
+
+function updateProgress() {
+  const p = state.players[state.turn];
+  if (!p) return;
+  const pct = clamp((p.pts / state.meta) * 100, 0, 100);
+  $('prog-name').textContent = p.name;
+  $('prog-pts').textContent  = `${p.pts} / ${state.meta} pts`;
+  $('prog-fill').style.width = pct + '%';
+}
+
+function updateScoreboard() {
+  const frag = document.createDocumentFragment();
+  state.players.forEach((p, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'score-chip' + (i === state.turn ? ' current-turn' : '');
+    chip.innerHTML = `<span class="sname">${esc(p.name)}</span><span class="pts">${p.pts}</span>`;
+    frag.appendChild(chip);
+  });
+  const row = $('score-row');
+  
+  // Utilizando replaceChildren para melhoria de performance no DOM
+  row.replaceChildren(frag); 
+}
+
+/* ════════════════════════════════════════════
+   FINAL SCREEN
+════════════════════════════════════════════ */
+function showFinal() {
+  const sorted = [...state.players].sort((a, b) => b.pts - a.pts);
+  const winner = sorted[0];
+  const loser  = sorted[sorted.length - 1];
+
+  $('final-winner').textContent = winner.name;
+  $('final-winner-score').textContent = `${winner.pts} pontos`;
+  $('final-loser').textContent = loser.name;
+  $('final-punishment').textContent = rnd(PUNISHMENTS);
+
+  const frag = document.createDocumentFragment();
+  sorted.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.className = 'lb-row';
+    row.setAttribute('role', 'listitem');
+    row.innerHTML =
+      `<span class="lb-rank">${['🥇','🥈','🥉'][i] || (i + 1) + 'º'}</span>` +
+      `<span class="lb-name">${esc(p.name)}</span>` +
+      `<span class="lb-pts">${p.pts}</span>`;
+    frag.appendChild(row);
+  });
+  const lb = $('leaderboard');
+  lb.replaceChildren(frag); // Aplicada também aqui a otimização DOM
+
+  state.active = false;
+  save();
+  showScreen('final');
+  chime();
+  setTimeout(launchConfetti, 280);
+
+  if (typeof gtag === 'function') {
+      gtag('event', 'finish_game', { 'winner': winner.name, 'level': state.level });
+  }
+}
+
+/* ════════════════════════════════════════════
+   RESTART / NEW GAME
+════════════════════════════════════════════ */
+function restart() {
+  if (!dbt('restart', 1000)) return;
+  try { localStorage.removeItem(STORE_KEY); } catch{}
+  // reset sem reload para evitar bugs no iOS
+  state = defaultState();
+  resetCards();
+  _cardBusy = false;
+  lastTarget = null; // CORREÇÃO: Reseta o último alvo
+  $('players-list').innerHTML = '';
+  $('secret-count').textContent = '';
+  $('inp-meta').value = 30;
+  setLevel(2, false);
+  showScreen('setup');
+  $('scoreboard').classList.remove('visible');
+}
+
+function newGame() {
+  if (!dbt('newgame', 800)) return;
+  // Manter jogadores mas zerar pontos
+  state.players.forEach(p => { p.pts = 0; });
+  state.turn     = 0;
+  state.active   = false;
+  state.cardType = null;
+  _cardBusy      = false;
+  lastTarget     = null; // CORREÇÃO: Reseta o último alvo
+  resetCards();
+
+  // Reset visual do ecrã de jogo
+  const cardEl = $('card-3d');
+  cardEl.classList.remove('flipped', 'theme-truth', 'theme-dare');
+  
+  // Limpa a carta inteira (CORREÇÃO DE SEGURANÇA NO DOM)
+  $('card-text').textContent = '';
+
+  $('ctrls-validate').classList.add('hidden');
+  $('validate-hint').classList.add('hidden');
+  $('ctrls-choose').classList.remove('hidden');
+  setChooseBtns(true);
+
+  save();
+  showScreen('setup');
+  $('scoreboard').classList.remove('visible');
+  syncSetup();
+}
+
+/* ════════════════════════════════════════════
+   HOW TO PLAY
+════════════════════════════════════════════ */
+function toggleHowto() {
+  const hdr  = $('howto-toggle');
+  const body = $('howto-body');
+  const open = body.classList.toggle('open');
+  hdr.classList.toggle('open', open);
+  hdr.setAttribute('aria-expanded', String(open));
+}
+
+function clampMeta() {
+  const inp = $('inp-meta');
+  const v   = parseInt(inp.value, 10);
+  inp.value = clamp(isNaN(v) ? 30 : v, 10, 60);
+}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  initConfetti(); // Pré-carregar pool de elementos para não haver quebra de framerate no final
+
+  $('btn-add').addEventListener('click', addPlayer);
+  $('btn-save-secret').addEventListener('click', saveSecret);
+  $('btn-start').addEventListener('click', startGame);
+  $('btn-truth').addEventListener('click', () => drawCard('v'));
+  $('btn-dare').addEventListener('click',  () => drawCard('d'));
+  $('btn-yes').addEventListener('click',   () => finishTurn(true));
+  $('btn-no').addEventListener('click',    () => finishTurn(false));
+  $('btn-restart').addEventListener('click', restart);
+  $('btn-new-game').addEventListener('click', newGame);
+  $('howto-toggle').addEventListener('click', toggleHowto);
+  $('inp-meta').addEventListener('blur',   clampMeta);
+  $('inp-meta').addEventListener('change', clampMeta);
+
+  document.querySelectorAll('.lvl-btn').forEach(b => {
+    b.addEventListener('click', () => setLevel(Number(b.dataset.lvl)));
+  });
+
+  $('inp-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addPlayer(); }
+  });
+  $('inp-secret').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); saveSecret(); }
+  });
+
+  // Inicializar AudioContext de forma segura e global para iOS/Android
+  const unlockEvents = ['touchstart', 'click', 'keydown'];
+  unlockEvents.forEach(e => document.body.addEventListener(e, unlockAudio, { once: true }));
+
+  load();
+});
+</script>
 </body>
 </html>
